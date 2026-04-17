@@ -1,4 +1,4 @@
-# 🚀 AWS Cert Prep Hub
+# 🚀 AWS Exam Prep Hub
 
 A modern, interactive web app to prepare for AWS certifications with **MCQ-based practice, instant feedback, and smart revision tools**.
 
