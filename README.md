@@ -2,7 +2,7 @@
 
 A modern, interactive web app to prepare for AWS certifications with **MCQ-based practice, instant feedback, and smart revision tools**.
 
-🌐 **Live Demo:**
+🌐 **Live at:**
 https://pratik-p-crest.github.io/AWS-Exam-Prep/
 
 ---
@@ -13,7 +13,7 @@ https://pratik-p-crest.github.io/AWS-Exam-Prep/
 
 * Randomized MCQ questions
 * Topic-based filtering
-* Instant answer feedback
+* After Quiz answer feedback
 * Progress tracking (correct / wrong / skipped)
 
 ### 📖 Revision Mode
