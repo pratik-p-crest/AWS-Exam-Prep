@@ -52,7 +52,10 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
    HOME
 ═══════════════════════════════════════ */
 #view-home{overflow-y:auto;-webkit-overflow-scrolling:touch}
-#view-home::-webkit-scrollbar{display:none}
+#view-home::-webkit-scrollbar{width:8px}
+#view-home::-webkit-scrollbar-track{background:var(--surface2);border-radius:4px}
+#view-home::-webkit-scrollbar-thumb{background:var(--muted);border-radius:4px;border:1px solid var(--border)}
+#view-home::-webkit-scrollbar-thumb:hover{background:var(--text)}
 .home-nav{
   position:sticky;top:0;z-index:100;height:var(--header-h);
   background:var(--nav-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);
@@ -193,7 +196,10 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 /* ═══ QUIZ PANEL ═══ */
 .quiz-panel{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 14px 32px;display:none}
 .quiz-panel.active{display:block}
-.quiz-panel::-webkit-scrollbar{display:none}
+.quiz-panel::-webkit-scrollbar{width:8px}
+.quiz-panel::-webkit-scrollbar-track{background:var(--surface2);border-radius:4px}
+.quiz-panel::-webkit-scrollbar-thumb{background:var(--muted);border-radius:4px;border:1px solid var(--border)}
+.quiz-panel::-webkit-scrollbar-thumb:hover{background:var(--text)}
 .quiz-inner{max-width:760px;margin:0 auto;width:100%}
 
 /* Config */
@@ -350,7 +356,10 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .rev-filter-btn.wrong-f.active{background:var(--red);border-color:var(--red);color:#fff}
 
 .rev-topic-list{overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch}
-.rev-topic-list::-webkit-scrollbar{display:none}
+.rev-topic-list::-webkit-scrollbar{width:6px}
+.rev-topic-list::-webkit-scrollbar-track{background:var(--surface2);border-radius:3px}
+.rev-topic-list::-webkit-scrollbar-thumb{background:var(--muted);border-radius:3px}
+.rev-topic-list::-webkit-scrollbar-thumb:hover{background:var(--text)}
 .rev-topic-item{padding:10px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);transition:background .1s;min-height:42px}
 [data-theme="light"] .rev-topic-item{border-bottom-color:rgba(226,232,240,.6)}
 .rev-topic-item:hover{background:var(--surface2)}
@@ -369,7 +378,10 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 /* main content */
 .rev-main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px}
-.rev-main::-webkit-scrollbar{display:none}
+.rev-main::-webkit-scrollbar{width:8px}
+.rev-main::-webkit-scrollbar-track{background:var(--surface2);border-radius:4px}
+.rev-main::-webkit-scrollbar-thumb{background:var(--muted);border-radius:4px;border:1px solid var(--border)}
+.rev-main::-webkit-scrollbar-thumb:hover{background:var(--text)}
 .rev-inner{max-width:660px;margin:0 auto}
 
 /* info bar inside revision (no nav buttons — those live in footer) */
@@ -402,6 +414,13 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .rev-opt.wrong .rev-opt-key{color:var(--red)}
 .rev-opt.sel-correct{border-color:var(--green);background:rgba(34,197,94,.13);box-shadow:0 0 0 1px var(--green)}
 .rev-opt.sel-wrong{border-color:var(--red);background:rgba(239,68,68,.13);box-shadow:0 0 0 1px var(--red)}
+.exam-mla .rev-opt.rev-opt-pending{border-color:rgba(139,92,246,.5);background:rgba(139,92,246,.08)}
+.exam-mla .rev-opt.rev-opt-pending .rev-opt-key{background:var(--mla-accent);color:#fff;border-color:transparent}
+.exam-aif .rev-opt.rev-opt-pending{border-color:rgba(245,158,11,.5);background:rgba(245,158,11,.08)}
+.exam-aif .rev-opt.rev-opt-pending .rev-opt-key{background:var(--aif-accent);color:#000;border-color:transparent}
+.exam-dea .rev-opt.rev-opt-pending{border-color:rgba(59,130,246,.5);background:rgba(59,130,246,.08)}
+.exam-dea .rev-opt.rev-opt-pending .rev-opt-key{background:var(--dea-accent);color:#fff;border-color:transparent}
+.rev-multi-hint{font-size:11px;color:var(--yellow);font-family:var(--mono);font-style:italic;margin-bottom:6px;padding:5px 8px;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);border-radius:6px}
 
 .rev-feedback{margin-top:9px;padding:9px 12px;border-radius:7px;font-size:12px;font-family:var(--mono);line-height:1.5;display:none}
 .rev-feedback.correct{display:block;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.3);color:var(--green)}
@@ -429,6 +448,67 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
 .empty-state .icon{font-size:40px;margin-bottom:12px}
 .empty-state p{font-family:var(--mono);font-size:12px;line-height:1.8}
+
+/* ═══ EXAM TIMER ═══ */
+.exam-timer{
+  display:flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:13px;font-weight:600;
+  padding:5px 11px;border-radius:8px;
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--text);white-space:nowrap;transition:all .3s;flex-shrink:0;
+}
+.exam-timer.warning{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.5);color:var(--yellow)}
+.exam-timer.danger{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.5);color:var(--red);animation:pulse-danger 1s infinite}
+@keyframes pulse-danger{0%,100%{opacity:1}50%{opacity:.6}}
+.timer-icon{font-size:12px}
+
+/* ═══ DOT STATUS IN EXAM MODE ═══ */
+.q-dot.ans-pending{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.5);color:var(--yellow)}
+
+/* ═══ EXAM SUBMIT BAR ═══ */
+.exam-submit-bar{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:16px 18px;margin-top:14px;display:flex;align-items:center;
+  gap:14px;flex-wrap:wrap;transition:var(--tt);
+}
+.exam-submit-info{flex:1;font-size:13px;color:var(--muted);font-family:var(--mono);line-height:1.6}
+.exam-submit-info strong{color:var(--text)}
+
+/* ═══ EXAM RESULTS DETAIL TABLE ═══ */
+.exam-results-detail{margin-top:20px;text-align:left}
+.erd-header{font-family:var(--display);font-size:17px;font-weight:700;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.erd-q-card{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:14px 16px;margin-bottom:10px;transition:var(--tt)}
+.erd-q-card.erd-correct{border-left:3px solid var(--green)}
+.erd-q-card.erd-wrong{border-left:3px solid var(--red)}
+.erd-q-card.erd-skipped{border-left:3px solid var(--muted);opacity:.75}
+.erd-meta{display:flex;align-items:center;gap:7px;margin-bottom:8px;flex-wrap:wrap}
+.erd-num{font-family:var(--mono);font-size:10px;color:var(--muted);background:var(--surface2);padding:2px 8px;border-radius:4px}
+.erd-status{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600}
+.erd-status.correct{background:rgba(34,197,94,.1);color:var(--green)}
+.erd-status.wrong{background:rgba(239,68,68,.1);color:var(--red)}
+.erd-status.skipped{background:rgba(100,116,139,.1);color:var(--muted)}
+.erd-time{font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:auto}
+.erd-q-text{font-size:13px;line-height:1.6;color:var(--text);margin-bottom:8px}
+.erd-ans-row{display:flex;gap:8px;flex-wrap:wrap;font-family:var(--mono);font-size:11px}
+.erd-your{padding:3px 9px;border-radius:5px;background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.25)}
+.erd-your.ok{background:rgba(34,197,94,.1);color:var(--green);border-color:rgba(34,197,94,.25)}
+.erd-correct-ans{padding:3px 9px;border-radius:5px;background:rgba(34,197,94,.07);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+
+/* ─── Option review rows in exam results ─── */
+.erd-opts-review{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.erd-opt{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);font-size:13px;line-height:1.5;transition:var(--tt)}
+.erd-opt-key{font-family:var(--mono);font-size:11px;font-weight:600;width:22px;min-width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;background:var(--surface2);color:var(--muted);border:1px solid var(--border);flex-shrink:0;margin-top:1px}
+.erd-opt-text{flex:1;color:var(--text)}
+.erd-opt-sel-correct{border-color:var(--green);background:rgba(34,197,94,.08)}
+.erd-opt-sel-correct .erd-opt-key{background:var(--green);color:#000;border-color:transparent}
+.erd-opt-correct{border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.04)}
+.erd-opt-correct .erd-opt-key{color:var(--green);border-color:rgba(34,197,94,.3)}
+.erd-opt-wrong{border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.08)}
+.erd-opt-wrong .erd-opt-key{background:var(--red);color:#fff;border-color:transparent}
+.erd-opt-badge{font-family:var(--mono);font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;padding:2px 7px;border-radius:4px;white-space:nowrap;flex-shrink:0;margin-top:3px}
+.erd-opt-badge.correct{background:rgba(34,197,94,.15);color:var(--green)}
+.erd-opt-badge.correct-hint{background:rgba(34,197,94,.1);color:var(--green)}
+.erd-opt-badge.wrong{background:rgba(239,68,68,.15);color:var(--red)}
 
 /* Mobile sidebar toggle */
 .rev-menu-btn{width:36px;height:36px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);display:none;align-items:center;justify-content:center;cursor:pointer;font-size:16px;flex-shrink:0;transition:var(--tt)}
@@ -482,7 +562,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <h2>AWS AI Practitioner</h2>
       <p>Generative AI, foundation models, AWS AI/ML services, responsible AI, and prompt engineering.</p>
       <div class="exam-card-footer">
-        <span class="exam-pill">303 Questions</span><span class="exam-pill">9 Topics</span><span class="exam-pill">Quiz + Revision</span>
+        <span class="exam-pill">303 Questions</span><span class="exam-pill">9 Topics</span><span class="exam-pill">Exam + Revision</span>
       </div>
     </div>
     <div class="exam-card mla" onclick="openExam('mla')">
@@ -512,6 +592,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <button class="back-btn" onclick="goHome()">← Home</button>
     <div class="exam-header-title" id="exam-header-title">AI Practitioner</div>
     <div class="exam-header-badge" id="exam-header-badge">AIF-C01</div>
+    <div class="exam-timer" id="exam-timer" style="display:none"><span class="timer-icon">⏱</span><span id="timer-display">2:10:00</span></div>
     <div class="exam-header-stats" id="exam-header-stats">
       <div class="stat-item"><div class="stat-dot blue"></div><span id="hdr-total">0</span></div>
       <div class="stat-item"><div class="stat-dot green"></div><span id="hdr-correct">0</span></div>
@@ -526,7 +607,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
   <!-- Fixed mode tabs -->
   <div class="mode-tabs-bar">
-    <button class="mode-tab-btn active-tab" id="tab-quiz" onclick="switchMode('quiz')">⏱ Quiz Mode</button>
+    <button class="mode-tab-btn active-tab" id="tab-quiz" onclick="switchMode('quiz')">📝 Exam Mode</button>
     <button class="mode-tab-btn" id="tab-rev" onclick="switchMode('revision')">📖 Revision Mode</button>
   </div>
 
@@ -537,8 +618,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <div class="quiz-panel active" id="quiz-panel">
       <div class="quiz-inner">
         <div id="quiz-config" class="quiz-config-screen">
-          <div class="qc-title">Configure Your Quiz</div>
-          <div class="qc-sub">Select topics and launch a randomised 65-question session.</div>
+          <div class="qc-title">Configure Your Exam</div>
+          <div class="qc-sub">Select topics and launch a 65-question timed exam session. <strong>130 minutes</strong> total — results are shown only after submission.</div>
           <div class="section-label">Topics</div>
           <div style="margin-bottom:9px">
             <button onclick="selectAllTopics()" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--dea-accent);font-family:var(--mono)" id="sel-all-btn">Deselect All</button>
@@ -546,7 +627,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
           <div class="topic-chips" id="topic-chips"></div>
           <div class="launch-bar">
             <div><div class="launch-count" id="launch-count">0</div><div class="launch-lbl">questions selected</div></div>
-            <button class="launch-btn" id="launch-quiz-btn" onclick="launchQuiz()">Start Quiz →</button>
+            <button class="launch-btn" id="launch-quiz-btn" onclick="launchQuiz()">Start Exam →</button>
           </div>
         </div>
         <div id="quiz-session" class="quiz-session">
@@ -629,7 +710,7 @@ function toggleTheme(cb){ applyTheme(!cb.checked); }
 /* ═══ STATE ═══ */
 let currentExam=null, currentMode='quiz';
 const quizState={questions:[],current:0,answers:{},score:{correct:0,wrong:0},done:false,selectedTopics:new Set()};
-const revState={answers:{},filter:'all',topic:'All Topics',search:'',page:0,perPage:15};
+const revState={answers:{},filter:'all',topic:'All Topics',search:'',page:0,perPage:15,pendingRev:{}};
 
 /* ═══ NAV ═══ */
 function openExam(id){
@@ -638,15 +719,15 @@ function openExam(id){
   document.getElementById('exam-header-title').textContent=m.title;
   document.getElementById('exam-header-badge').textContent=m.badge;
   document.getElementById('view-exam').className='view exam-'+m.color;
-  Object.assign(quizState,{questions:[],current:0,answers:{},score:{correct:0,wrong:0},done:false});
-  Object.assign(revState,{answers:{},filter:'all',topic:'All Topics',search:'',page:0});
+  Object.assign(quizState,{questions:[],current:0,answers:{},score:{correct:0,wrong:0},done:false,questionTimes:{}});
+  Object.assign(revState,{answers:{},filter:'all',topic:'All Topics',search:'',page:0,pendingRev:{}});
   document.querySelectorAll('.rev-filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.filter==='all'));
   setupQuizConfig();
   showView('exam');
   switchMode('quiz');
 }
 
-function goHome(){ showView('home'); currentExam=null; }
+function goHome(){ stopExamTimer(); showView('home'); currentExam=null; }
 function showView(id){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.getElementById('view-'+id).classList.add('active'); }
 
 function setFooterVisible(vis){
@@ -665,13 +746,26 @@ function switchMode(mode){
   document.getElementById('revision-panel').classList.toggle('active',mode==='revision');
   // header items
   document.getElementById('rev-menu-btn').style.display=mode==='revision'?'flex':'none';
-  document.getElementById('exam-header-stats').style.display=mode==='quiz'?'flex':'none';
+  document.getElementById('exam-header-stats').style.display='none'; // hidden in exam mode
+  // timer: only show in quiz mode when exam is running
+  const timerEl=document.getElementById('exam-timer');
+  if(mode==='quiz'&&quizState.questions&&quizState.questions.length>0&&!quizState.done){
+    timerEl.style.display='flex';
+  } else if(mode!=='quiz'){
+    timerEl.style.display='none';
+  }
   // footer: only show in revision
   setFooterVisible(mode==='revision');
   if(mode==='revision') renderRevision();
 }
 
-/* ═══ QUIZ ═══ */
+/* ═══ QUIZ / EXAM ═══ */
+const EXAM_DURATION = 130 * 60; // 130 minutes in seconds
+let examTimerInterval = null;
+let examSecondsLeft = EXAM_DURATION;
+let questionStartTime = null; // timestamp when current question was shown
+// quizState.questionTimes = {idx: seconds_spent}
+
 function getQs(){ return QUESTIONS_DB[currentExam]||[]; }
 function getTopics(){ const m={}; getQs().forEach(q=>{ const t=q.topic||'General'; m[t]=(m[t]||0)+1; }); return m; }
 
@@ -691,6 +785,9 @@ function setupQuizConfig(){
   document.getElementById('quiz-config').style.display='';
   document.getElementById('quiz-session').style.display='none';
   document.getElementById('quiz-session').classList.remove('active');
+  stopExamTimer();
+  document.getElementById('exam-timer').style.display='none';
+  document.getElementById('exam-header-stats').style.display='none';
 }
 
 function toggleTopic(el,t){
@@ -714,60 +811,232 @@ function launchQuiz(){
   const f=getQs().filter(q=>quizState.selectedTopics.has(q.topic||'General'));
   quizState.questions=[...f].sort(()=>Math.random()-.5).slice(0,65);
   quizState.current=0;quizState.answers={};quizState.score={correct:0,wrong:0};quizState.done=false;
+  quizState.questionTimes={};
   document.getElementById('quiz-config').style.display='none';
   document.getElementById('quiz-session').style.display='';
   document.getElementById('quiz-session').classList.add('active');
+  // Start exam timer
+  examSecondsLeft=EXAM_DURATION;
+  startExamTimer();
+  document.getElementById('exam-timer').style.display='flex';
+  questionStartTime=Date.now();
   renderQ();
 }
 
-function renderQ(){
-  const c=document.getElementById('quiz-session-inner'),st=quizState;
-  if(st.done){renderResults();return;}
-  const q=st.questions[st.current],ans=st.answers[st.current]||{selected:[],submitted:false};
-  const total=st.questions.length,isMulti=q.question_type==='multi-choice',ck=q.answer;
-  let dots='';
-  for(let i=0;i<total;i++){const a=st.answers[i];let cls='';if(i===st.current)cls='cur';else if(a&&a.submitted)cls=a.correct?'ans-c':'ans-w';dots+=`<button class="q-dot ${cls}" onclick="qJump(${i})">${i+1}</button>`;}
-  let opts='';
-  Object.entries(q.options).forEach(([k,v])=>{
-    let cls='';if(ans.submitted){if(ck.includes(k))cls=ans.selected.includes(k)?'correct':'correct';else if(ans.selected.includes(k))cls='wrong';}else if(ans.selected.includes(k))cls='selected';
-    opts+=`<button class="opt-btn ${cls}" ${ans.submitted?'disabled':''} onclick="qSel(${st.current},'${k}')"><span class="opt-key">${k}</span><span class="opt-text">${v}</span></button>`;
-  });
-  let fb='';
-  if(ans.submitted){const ct=ck.map(k=>`<strong>${k}:</strong> ${q.options[k]}`).join('<br>');fb=`<div class="ans-feedback ${ans.correct?'correct-fb':'wrong-fb'} show">${ans.correct?'✓ Correct!':'✗ Incorrect — Correct: '+ck.join(', ')}${!ans.correct?'<div class="fb-ans-text">'+ct+'</div>':''}${q.reference_link?`<br><a class="ref-lnk" href="${q.reference_link}" target="_blank" rel="noopener">↗ Reference</a>`:''}</div>`;}
-  const isLast=st.current===total-1,sdis=(!ans.submitted&&!ans.selected.length)?'disabled':'';
-  c.innerHTML=`<div class="q-progress-bar"><div class="q-prog-track"><div class="q-prog-fill" style="width:${((st.current+1)/total*100).toFixed(0)}%"></div></div><div class="q-prog-label">${st.current+1} / ${total}</div></div>
-  <div class="quiz-stats-row"><span class="qs-pill correct">✓ ${st.score.correct}</span><span class="qs-pill wrong">✗ ${st.score.wrong}</span><span class="qs-pill skip">— ${total-st.score.correct-st.score.wrong}</span><span class="qs-pill topic">${q.topic||'General'}</span></div>
-  <div class="q-nav-dots">${dots}</div>
-  <div class="q-card"><div class="q-meta"><span class="q-num-tag">Q${st.current+1}</span><span class="q-type-tag">${isMulti?'Multi-Select':'Single'}</span><span class="q-topic-tag">${q.topic||'General'}</span></div><div class="q-text">${q.question}</div></div>
-  ${isMulti?`<div class="multi-hint">Select all that apply (${ck.length} correct)</div>`:''}
-  <div class="opts-list">${opts}</div>${fb}
-  <div class="quiz-actions">${!ans.submitted?`<button class="btn btn-primary" ${sdis} onclick="qSubmit(${st.current})">Submit</button>`:'<button class="btn btn-primary" disabled>Submitted ✓</button>'}
-  ${ans.submitted&&!isLast?`<button class="btn btn-primary" onclick="qNext()">Next →</button>`:''}
-  ${ans.submitted&&isLast?`<button class="btn btn-primary" onclick="qFinish()">Results →</button>`:''}
-  ${!ans.submitted?`<button class="btn btn-secondary" onclick="qSkip()">Skip</button>`:''}
-  <button class="btn btn-danger" onclick="qReset()">↺ Reset</button></div>`;
-  updateHdr();
+/* ─── Timer ─── */
+function startExamTimer(){
+  stopExamTimer();
+  updateTimerDisplay();
+  examTimerInterval=setInterval(()=>{
+    examSecondsLeft--;
+    updateTimerDisplay();
+    if(examSecondsLeft<=0){ stopExamTimer(); autoSubmitExam(); }
+  },1000);
+}
+function stopExamTimer(){
+  if(examTimerInterval){ clearInterval(examTimerInterval); examTimerInterval=null; }
+}
+function updateTimerDisplay(){
+  const el=document.getElementById('exam-timer');
+  const disp=document.getElementById('timer-display');
+  if(!disp)return;
+  const h=Math.floor(examSecondsLeft/3600),m=Math.floor((examSecondsLeft%3600)/60),s=examSecondsLeft%60;
+  disp.textContent=`${h>0?h+':':''}${String(m).padStart(h>0?2:1,'0')}:${String(s).padStart(2,'0')}`;
+  el.classList.toggle('warning',examSecondsLeft<=600&&examSecondsLeft>120);
+  el.classList.toggle('danger',examSecondsLeft<=120);
+}
+function autoSubmitExam(){
+  recordQuestionTime(quizState.current);
+  quizState.done=true;
+  renderQ();
 }
 
-function updateHdr(){const st=quizState;document.getElementById('hdr-total').textContent=st.questions.length;document.getElementById('hdr-correct').textContent=st.score.correct;document.getElementById('hdr-wrong').textContent=st.score.wrong;}
-function qSel(idx,k){const st=quizState,q=st.questions[idx];if(!st.answers[idx])st.answers[idx]={selected:[],submitted:false};const ans=st.answers[idx];if(ans.submitted)return;if(q.question_type==='multi-choice'){const p=ans.selected.indexOf(k);p===-1?ans.selected.push(k):ans.selected.splice(p,1);}else ans.selected=[k];renderQ();}
-function qSubmit(idx){const st=quizState,ans=st.answers[idx];if(!ans||ans.submitted||!ans.selected.length)return;ans.submitted=true;const q=st.questions[idx];const ok=arrEq(ans.selected.slice().sort(),q.answer.slice().sort());ans.correct=ok;if(ok)st.score.correct++;else st.score.wrong++;renderQ();}
-function qSkip(){const st=quizState;if(!st.answers[st.current])st.answers[st.current]={selected:[],submitted:false};if(st.current<st.questions.length-1)st.current++;renderQ();}
-function qNext(){const st=quizState;if(st.current<st.questions.length-1){st.current++;renderQ();}}
-function qJump(i){quizState.current=i;renderQ();}
+/* ─── Time tracking ─── */
+function recordQuestionTime(idx){
+  if(questionStartTime===null)return;
+  const elapsed=Math.round((Date.now()-questionStartTime)/1000);
+  quizState.questionTimes[idx]=(quizState.questionTimes[idx]||0)+elapsed;
+  questionStartTime=Date.now();
+}
+function fmtTime(sec){
+  if(!sec||sec<1)return '—';
+  if(sec<60)return sec+'s';
+  return Math.floor(sec/60)+'m '+String(sec%60).padStart(2,'0')+'s';
+}
+
+/* ─── Render question (exam mode — no instant feedback) ─── */
+function renderQ(){
+  const c=document.getElementById('quiz-session-inner'),st=quizState;
+  if(st.done){stopExamTimer();document.getElementById('exam-timer').style.display='none';renderResults();return;}
+  const q=st.questions[st.current],ans=st.answers[st.current]||{selected:[]};
+  const total=st.questions.length,isMulti=q.question_type==='multi-choice';
+  // Navigation dots: cur=current, ans-pending=answered-not-submitted, neutral=untouched
+  let dots='';
+  for(let i=0;i<total;i++){
+    const a=st.answers[i];
+    let cls='';
+    if(i===st.current) cls='cur';
+    else if(a&&a.selected&&a.selected.length>0) cls='ans-pending';
+    dots+=`<button class="q-dot ${cls}" onclick="qJump(${i})">${i+1}</button>`;
+  }
+  // Options — no correct/wrong coloring during exam
+  let opts='';
+  Object.entries(q.options).forEach(([k,v])=>{
+    const sel=ans.selected&&ans.selected.includes(k)?'selected':'';
+    opts+=`<button class="opt-btn ${sel}" onclick="qSel(${st.current},'${k}')"><span class="opt-key">${k}</span><span class="opt-text">${v}</span></button>`;
+  });
+  const answeredCount=Object.values(st.answers).filter(a=>a.selected&&a.selected.length>0).length;
+  const unanswered=total-answeredCount;
+  const isLast=st.current===total-1;
+  const hasAnswer=ans.selected&&ans.selected.length>0;
+  c.innerHTML=`
+  <div class="q-progress-bar">
+    <div class="q-prog-track"><div class="q-prog-fill" style="width:${((st.current+1)/total*100).toFixed(0)}%"></div></div>
+    <div class="q-prog-label">${st.current+1} / ${total}</div>
+  </div>
+  <div class="quiz-stats-row">
+    <span class="qs-pill correct">✓ ${answeredCount} answered</span>
+    <span class="qs-pill skip">— ${unanswered} remaining</span>
+    <span class="qs-pill topic">${q.topic||'General'}</span>
+  </div>
+  <div class="q-nav-dots">${dots}</div>
+  <div class="q-card">
+    <div class="q-meta"><span class="q-num-tag">Q${st.current+1}</span><span class="q-type-tag">${isMulti?'Multi-Select':'Single'}</span><span class="q-topic-tag">${q.topic||'General'}</span></div>
+    <div class="q-text">${q.question}</div>
+  </div>
+  ${isMulti?`<div class="multi-hint">Select all that apply (${q.answer.length} correct)</div>`:''}
+  <div class="opts-list">${opts}</div>
+  <div class="quiz-actions">
+    ${!isLast?`<button class="btn btn-primary" onclick="qNext()">Next →</button>`:''}
+    ${isLast?`<button class="btn btn-primary" onclick="showSubmitConfirm()">Submit Exam →</button>`:''}
+    ${st.current>0?`<button class="btn btn-secondary" onclick="qPrev()">← Prev</button>`:''}
+    <button class="btn btn-danger" onclick="qReset()">↺ Reset</button>
+  </div>
+  ${isLast?`<div class="exam-submit-bar">
+    <div class="exam-submit-info">
+      <strong>${answeredCount} of ${total}</strong> questions answered · <strong>${unanswered}</strong> unanswered<br>
+      Click <em>Submit Exam</em> when you're ready. Results will show after submission.
+    </div>
+  </div>`:''}`;
+}
+
+function showSubmitConfirm(){
+  const st=quizState;
+  const answeredCount=Object.values(st.answers).filter(a=>a.selected&&a.selected.length>0).length;
+  const unanswered=st.questions.length-answeredCount;
+  const msg=unanswered>0
+    ?`You have ${unanswered} unanswered question(s). Submit anyway and end the exam?`
+    :`All ${st.questions.length} questions answered. Submit exam now?`;
+  if(!confirm(msg))return;
+  recordQuestionTime(st.current);
+  qFinish();
+}
+
+function qSel(idx,k){
+  const st=quizState,q=st.questions[idx];
+  if(!st.answers[idx])st.answers[idx]={selected:[]};
+  const ans=st.answers[idx];
+  if(q.question_type==='multi-choice'){const p=ans.selected.indexOf(k);p===-1?ans.selected.push(k):ans.selected.splice(p,1);}
+  else ans.selected=[k];
+  renderQ();
+}
+function qNext(){
+  recordQuestionTime(quizState.current);
+  if(quizState.current<quizState.questions.length-1){quizState.current++;renderQ();}
+}
+function qPrev(){
+  recordQuestionTime(quizState.current);
+  if(quizState.current>0){quizState.current--;renderQ();}
+}
+function qJump(i){
+  recordQuestionTime(quizState.current);
+  quizState.current=i;
+  renderQ();
+}
 function qFinish(){quizState.done=true;renderQ();}
-function qReset(){if(!confirm('Reset this quiz session?'))return;const st=quizState;st.done=false;st.current=0;st.answers={};st.score={correct:0,wrong:0};st.questions=[...st.questions].sort(()=>Math.random()-.5);renderQ();}
+function qReset(){
+  if(!confirm('Reset this exam session? All answers and timer will be lost.'))return;
+  stopExamTimer();
+  document.getElementById('exam-timer').style.display='none';
+  const st=quizState;
+  st.done=false;st.current=0;st.answers={};st.score={correct:0,wrong:0};st.questionTimes={};
+  st.questions=[...st.questions].sort(()=>Math.random()-.5);
+  examSecondsLeft=EXAM_DURATION;
+  startExamTimer();
+  document.getElementById('exam-timer').style.display='flex';
+  questionStartTime=Date.now();
+  renderQ();
+}
+
 function renderResults(){
   const st=quizState,total=st.questions.length;
-  const answered=Object.values(st.answers).filter(a=>a.submitted).length;
-  const pct=Math.round((st.score.correct/total)*100),pass=pct>=70,skip=total-answered;
-  document.getElementById('quiz-session-inner').innerHTML=`<div class="results-screen"><div class="results-circle"><div class="results-pct">${pct}%</div><div class="results-lbl">Score</div></div>
-  <div class="results-title">${pass?'🎉 Well Done!':'📖 Keep Going'}</div>
-  <div class="results-sub">${pass?'You cleared 70%. Review wrong answers for weak spots.':'Below 70% — study the references and retry.'}</div>
-  <div class="results-stats"><div class="rs-box green"><div class="rs-num">${st.score.correct}</div><div class="rs-lbl">Correct</div></div><div class="rs-box red"><div class="rs-num">${st.score.wrong}</div><div class="rs-lbl">Wrong</div></div><div class="rs-box blue"><div class="rs-num">${skip}</div><div class="rs-lbl">Skipped</div></div><div class="rs-box"><div class="rs-num" style="color:var(--muted)">${total}</div><div class="rs-lbl">Total</div></div></div>
-  <div class="results-actions"><button class="btn btn-primary" onclick="qReset()">Retake</button><button class="btn btn-secondary" onclick="qReview()">Review</button><button class="btn btn-secondary" onclick="backToConfig()">New Quiz</button></div></div>`;
+  // Calculate scores now (not during exam)
+  let correct=0,wrong=0,skipped=0;
+  st.questions.forEach((q,i)=>{
+    const ans=st.answers[i];
+    if(!ans||!ans.selected||!ans.selected.length){skipped++;return;}
+    const ok=arrEq(ans.selected.slice().sort(),q.answer.slice().sort());
+    if(ok)correct++;else wrong++;
+  });
+  const pct=Math.round((correct/total)*100),pass=pct>=70;
+  // Total time used
+  const totalTimeSec=EXAM_DURATION-examSecondsLeft;
+  const totalTimeStr=fmtTime(Math.max(totalTimeSec,0));
+
+  // Per-question detail rows
+  let detailRows='';
+  st.questions.forEach((q,i)=>{
+    const ans=st.answers[i];
+    const hasAns=ans&&ans.selected&&ans.selected.length>0;
+    const ok=hasAns?arrEq(ans.selected.slice().sort(),q.answer.slice().sort()):false;
+    const statusCls=!hasAns?'skipped':ok?'correct':'wrong';
+    const statusLabel=!hasAns?'Skipped':ok?'✓ Correct':'✗ Wrong';
+    const timeTaken=fmtTime(st.questionTimes[i]||0);
+    // Build option rows with full highlighting
+    let optRows='';
+    Object.entries(q.options).forEach(([k,v])=>{
+      const isCorrect=q.answer.includes(k);
+      const userPicked=hasAns&&ans.selected.includes(k);
+      let optCls='erd-opt';
+      let badge='';
+      if(isCorrect&&userPicked){optCls+=' erd-opt-sel-correct';badge=`<span class="erd-opt-badge correct">✓ Your answer</span>`;}
+      else if(isCorrect&&!userPicked){optCls+=' erd-opt-correct';badge=`<span class="erd-opt-badge correct-hint">✓ Correct</span>`;}
+      else if(!isCorrect&&userPicked){optCls+=' erd-opt-wrong';badge=`<span class="erd-opt-badge wrong">✗ Your answer</span>`;}
+      optRows+=`<div class="${optCls}"><span class="erd-opt-key">${k}</span><span class="erd-opt-text">${v}</span>${badge}</div>`;
+    });
+    detailRows+=`<div class="erd-q-card erd-${statusCls}">
+      <div class="erd-meta">
+        <span class="erd-num">Q${i+1}</span>
+        <span class="erd-status ${statusCls}">${statusLabel}</span>
+        <span class="erd-time">⏱ ${timeTaken}</span>
+      </div>
+      <div class="erd-q-text">${q.question}</div>
+      <div class="erd-opts-review">${optRows}</div>
+    </div>`;
+  });
+
+  document.getElementById('quiz-session-inner').innerHTML=`
+  <div class="results-screen">
+    <div class="results-circle"><div class="results-pct">${pct}%</div><div class="results-lbl">Score</div></div>
+    <div class="results-title">${pass?'🎉 Well Done!':'📖 Keep Going'}</div>
+    <div class="results-sub">${pass?'You cleared 70%. Review the breakdown below for weak spots.':'Below 70% — study the references and retry.'}</div>
+    <div class="results-stats">
+      <div class="rs-box green"><div class="rs-num">${correct}</div><div class="rs-lbl">Correct</div></div>
+      <div class="rs-box red"><div class="rs-num">${wrong}</div><div class="rs-lbl">Wrong</div></div>
+      <div class="rs-box blue"><div class="rs-num">${skipped}</div><div class="rs-lbl">Skipped</div></div>
+      <div class="rs-box"><div class="rs-num" style="color:var(--muted)">${total}</div><div class="rs-lbl">Total</div></div>
+      <div class="rs-box"><div class="rs-num" style="font-size:14px;color:var(--muted)">${totalTimeStr}</div><div class="rs-lbl">Time Used</div></div>
+    </div>
+    <div class="results-actions">
+      <button class="btn btn-primary" onclick="qReset()">Retake Exam</button>
+      <button class="btn btn-secondary" onclick="backToConfig()">New Exam</button>
+    </div>
+  </div>
+  <div class="exam-results-detail">
+    <div class="erd-header">📋 Question-by-Question Breakdown</div>
+    ${detailRows}
+  </div>`;
 }
-function qReview(){quizState.done=false;quizState.current=0;renderQ();}
 function backToConfig(){document.getElementById('quiz-config').style.display='';document.getElementById('quiz-session').style.display='none';document.getElementById('quiz-session').classList.remove('active');setupQuizConfig();}
 
 /* ═══ REVISION ═══ */
@@ -807,34 +1076,113 @@ function renderRevision(){
     if(!btn.hasAttribute('disabled')){
       btn.addEventListener('click',()=>{
         const qid=btn.dataset.qid,k=btn.dataset.key;
-        if(revState.answers[qid])return;
         const q=(QUESTIONS_DB[currentExam]||[]).find(x=>x.question_id===qid);
         if(!q)return;
-        const ok=arrEq([k].sort(),q.answer.slice().sort());
-        revState.answers[qid]={selected:[k],submitted:true,correct:ok};
-        const idx=filtered.indexOf(q);
-        const card=document.getElementById('rev-card-'+qid);
-        if(card){const tmp=document.createElement('div');tmp.innerHTML=buildRevCard(q,start+idx);card.replaceWith(tmp.firstChild);}
-        updateRevProgress();renderRevSidebar();
+        const isMulti=q.question_type==='multi-choice';
+        // Already fully submitted (non-multi or multi that was confirmed)
+        if(revState.answers[qid]&&revState.answers[qid].submitted)return;
+
+        if(isMulti){
+          // Toggle selection for multi-choice
+          if(!revState.pendingRev) revState.pendingRev={};
+          if(!revState.pendingRev[qid]) revState.pendingRev[qid]=[];
+          const pending=revState.pendingRev[qid];
+          const pos=pending.indexOf(k);
+          if(pos===-1) pending.push(k); else pending.splice(pos,1);
+          // Re-render just this card to reflect pending selections
+          const idx=filtered.indexOf(q);
+          const card=document.getElementById('rev-card-'+qid);
+          if(card){const tmp=document.createElement('div');tmp.innerHTML=buildRevCard(q,start+idx);card.replaceWith(tmp.firstChild);}
+          // Re-bind events for updated card
+          document.getElementById('rev-card-'+qid)&&bindRevCard(document.getElementById('rev-card-'+qid),q,filtered,start+idx);
+        } else {
+          // Single choice — submit immediately
+          const ok=arrEq([k].sort(),q.answer.slice().sort());
+          revState.answers[qid]={selected:[k],submitted:true,correct:ok};
+          const idx=filtered.indexOf(q);
+          const card=document.getElementById('rev-card-'+qid);
+          if(card){const tmp=document.createElement('div');tmp.innerHTML=buildRevCard(q,start+idx);card.replaceWith(tmp.firstChild);}
+          updateRevProgress();renderRevSidebar();
+        }
       });
     }
+  });
+  // Bind submit buttons for multi-select
+  inner.querySelectorAll('.rev-multi-submit').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const qid=btn.dataset.qid;
+      const q=(QUESTIONS_DB[currentExam]||[]).find(x=>x.question_id===qid);
+      if(!q)return;
+      const pending=(revState.pendingRev&&revState.pendingRev[qid])||[];
+      if(!pending.length)return;
+      const ok=arrEq(pending.slice().sort(),q.answer.slice().sort());
+      revState.answers[qid]={selected:pending.slice(),submitted:true,correct:ok};
+      if(revState.pendingRev) delete revState.pendingRev[qid];
+      const idx=filtered.indexOf(q);
+      const card=document.getElementById('rev-card-'+qid);
+      if(card){const tmp=document.createElement('div');tmp.innerHTML=buildRevCard(q,start+idx);card.replaceWith(tmp.firstChild);}
+      updateRevProgress();renderRevSidebar();
+    });
+  });
+}
+
+function bindRevCard(cardEl,q,filtered,gi){
+  cardEl.querySelectorAll('.rev-opt:not([disabled])').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const qid=btn.dataset.qid,k=btn.dataset.key;
+      if(!revState.pendingRev) revState.pendingRev={};
+      if(!revState.pendingRev[qid]) revState.pendingRev[qid]=[];
+      const pending=revState.pendingRev[qid];
+      const pos=pending.indexOf(k);
+      if(pos===-1) pending.push(k); else pending.splice(pos,1);
+      const newCard=document.getElementById('rev-card-'+qid);
+      if(newCard){const tmp=document.createElement('div');tmp.innerHTML=buildRevCard(q,gi);newCard.replaceWith(tmp.firstChild);}
+      const refreshed=document.getElementById('rev-card-'+qid);
+      if(refreshed) bindRevCard(refreshed,q,filtered,gi);
+    });
+  });
+  cardEl.querySelectorAll('.rev-multi-submit').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const qid=btn.dataset.qid;
+      const pending=(revState.pendingRev&&revState.pendingRev[qid])||[];
+      if(!pending.length)return;
+      const ok=arrEq(pending.slice().sort(),q.answer.slice().sort());
+      revState.answers[qid]={selected:pending.slice(),submitted:true,correct:ok};
+      if(revState.pendingRev) delete revState.pendingRev[qid];
+      const card=document.getElementById('rev-card-'+qid);
+      if(card){const tmp=document.createElement('div');tmp.innerHTML=buildRevCard(q,gi);card.replaceWith(tmp.firstChild);}
+      updateRevProgress();renderRevSidebar();
+    });
   });
 }
 
 function buildRevCard(q,gi){
   const ans=revState.answers[q.question_id];
   const isOk=ans&&arrEq(ans.selected.slice().sort(),q.answer.slice().sort());
+  const isMulti=q.question_type==='multi-choice';
+  const pending=(revState.pendingRev&&revState.pendingRev[q.question_id])||[];
   let opts='';
   Object.entries(q.options).forEach(([k,v])=>{
     let cls='';
-    if(ans){if(q.answer.includes(k))cls=ans.selected.includes(k)?'sel-correct':'correct';else if(ans.selected.includes(k))cls='sel-wrong';}
-    opts+=`<button class="rev-opt ${cls}" ${ans?'disabled':''} data-qid="${q.question_id}" data-key="${k}"><span class="rev-opt-key">${k}</span><span>${v}</span></button>`;
+    if(ans){
+      // Submitted: show result colors
+      if(q.answer.includes(k)) cls=ans.selected.includes(k)?'sel-correct':'correct';
+      else if(ans.selected.includes(k)) cls='sel-wrong';
+    } else if(isMulti&&pending.includes(k)){
+      // Pending multi-select highlight (use 'selected' class from exam style)
+      cls='rev-opt-pending';
+    }
+    const disabled=ans?'disabled':'';
+    opts+=`<button class="rev-opt ${cls}" ${disabled} data-qid="${q.question_id}" data-key="${k}"><span class="rev-opt-key">${k}</span><span>${v}</span></button>`;
   });
+  const multiHint=isMulti&&!ans?`<div class="rev-multi-hint">Select all that apply (${q.answer.length} correct answers) — then click Submit</div>`:'';
+  const submitBtn=isMulti&&!ans?`<button class="rev-multi-submit btn btn-primary" data-qid="${q.question_id}" ${pending.length===0?'disabled':''} style="margin-top:8px;font-size:11px;padding:7px 16px">Submit Answer</button>`:'';
   const fb=ans?(isOk?`<div class="rev-feedback correct">✓ Correct! Answer: ${q.answer.join(', ')}</div>`:`<div class="rev-feedback wrong">✗ Wrong. Correct: ${q.answer.join(', ')} — ${q.answer.map(k=>q.options[k]).join('; ')}</div>`):'';
   return `<div class="rev-q-card" id="rev-card-${q.question_id}">
-    <div class="rev-q-meta"><span class="rev-q-num">#${gi+1}</span><span class="rev-q-topic">${q.topic||'General'}</span>${ans?`<span class="rev-q-status">${isOk?'✅':'❌'}</span>`:''}</div>
+    <div class="rev-q-meta"><span class="rev-q-num">#${gi+1}</span><span class="rev-q-topic">${q.topic||'General'}</span>${isMulti?`<span class="rev-q-topic" style="color:var(--yellow);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">Multi-Select</span>`:''}${ans?`<span class="rev-q-status">${isOk?'✅':'❌'}</span>`:''}</div>
     <div class="rev-q-text">${q.question}</div>
-    <div class="rev-opts">${opts}</div>${fb}
+    ${multiHint}
+    <div class="rev-opts">${opts}</div>${submitBtn}${fb}
   </div>`;
 }
 
@@ -868,7 +1216,7 @@ function renderRevSidebar(){
   tl.querySelectorAll('.rev-topic-item').forEach(el=>el.addEventListener('click',()=>{revState.topic=el.dataset.topic;revState.page=0;closeRevSidebar();renderRevision();}));
 }
 
-function revReset(){if(!confirm('Reset answers for current filter?'))return;filteredRev().forEach(q=>delete revState.answers[q.question_id]);revState.page=0;renderRevision();}
+function revReset(){if(!confirm('Reset answers for current filter?'))return;filteredRev().forEach(q=>delete revState.answers[q.question_id]);revState.pendingRev={};revState.page=0;renderRevision();}
 
 function revSummary(){
   const f=filteredRev(),total=f.length;
