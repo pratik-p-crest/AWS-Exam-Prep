@@ -936,79 +936,148 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 @media(min-width:768px){.kbd-hint{display:block}}
 
 /* ═══ NOTES PANEL ═══ */
-.notes-panel{display:none;flex-direction:column;height:100%;overflow:hidden}
+.notes-panel{
+  display:none;position:absolute;inset:0;
+  flex-direction:column;overflow:hidden;
+}
 .notes-panel.active{display:flex}
-.notes-sidebar{
-  width:240px;flex-shrink:0;border-right:1px solid var(--border);
-  background:var(--surface);overflow-y:auto;padding:16px 12px;
-  display:flex;flex-direction:column;gap:8px;
-}
-.notes-sidebar-title{
-  font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;
-  letter-spacing:1.2px;color:var(--muted);padding:0 4px;margin-bottom:4px;
-}
-.notes-item{
-  display:flex;align-items:flex-start;gap:10px;padding:12px 12px;border-radius:10px;
-  border:1px solid var(--border);background:var(--surface2);
-  cursor:pointer;transition:all .18s;text-align:left;width:100%;
-}
-[data-theme="dark"] .notes-item{background:rgba(255,255,255,0.02)}
-.notes-item:hover{border-color:var(--border-bright);background:var(--surface3)}
-.notes-item.active-note{
-  border-color:rgba(167,139,250,.5);background:rgba(167,139,250,.08);
-}
-[data-theme="dark"] .notes-item.active-note{box-shadow:0 0 0 1px rgba(167,139,250,.15)}
-.notes-item-icon{font-size:16px;flex-shrink:0;margin-top:1px}
-.notes-item-info{flex:1;min-width:0}
-.notes-item-title{font-family:var(--sans);font-size:12px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:2px}
-.notes-item.active-note .notes-item-title{color:var(--mla-accent)}
-.notes-item-sub{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
 
-.notes-viewer{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
-.notes-viewer-toolbar{
-  padding:10px 16px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:10px;flex-shrink:0;
-  background:var(--nav-bg);backdrop-filter:blur(16px);
+/* ── Toolbar (fixed at top of notes panel) ── */
+.notes-toolbar{
+  height:46px;flex-shrink:0;
+  background:var(--nav-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 12px;gap:8px;
+  transition:var(--tt);
 }
-.notes-viewer-title{font-family:var(--display);font-size:13px;font-weight:700;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+[data-theme="light"] .notes-toolbar{box-shadow:0 1px 0 var(--border)}
+.notes-menu-btn{
+  height:32px;width:32px;border-radius:8px;border:1px solid var(--border);
+  background:var(--surface2);color:var(--text-secondary);font-size:14px;
+  cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.notes-menu-btn:hover{background:var(--surface3);border-color:var(--border-bright);color:var(--text)}
+.notes-toolbar-title{
+  font-family:var(--display);font-size:13px;font-weight:700;color:var(--text);
+  flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.notes-toolbar-title.placeholder{color:var(--muted);font-weight:500;font-family:var(--sans);font-size:12px}
 .notes-viewer-badge{
   font-family:var(--mono);font-size:9px;font-weight:700;padding:3px 9px;border-radius:20px;
   background:rgba(167,139,250,.12);color:var(--mla-accent);border:1px solid rgba(167,139,250,.3);
-  letter-spacing:.8px;text-transform:uppercase;white-space:nowrap;
+  letter-spacing:.8px;text-transform:uppercase;white-space:nowrap;flex-shrink:0;
 }
 .notes-open-btn{
   font-family:var(--mono);font-size:9px;font-weight:700;padding:5px 12px;border-radius:8px;
   border:1px solid rgba(167,139,250,.4);background:rgba(167,139,250,.1);color:var(--mla-accent);
-  cursor:pointer;transition:all .18s;text-decoration:none;display:flex;align-items:center;gap:5px;
-  text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;
+  cursor:pointer;transition:all .18s;text-decoration:none;display:none;align-items:center;gap:5px;
+  text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;flex-shrink:0;
 }
-.notes-open-btn:hover{background:rgba(167,139,250,.18);border-color:rgba(167,139,250,.6)}
+.notes-open-btn.visible{display:flex}
+.notes-open-btn:hover{background:rgba(167,139,250,.2);border-color:rgba(167,139,250,.7)}
 
-.notes-frame-wrap{flex:1;overflow:hidden;position:relative}
-.notes-frame-wrap iframe{width:100%;height:100%;border:none;display:block;background:#fff}
-.notes-empty{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  height:100%;gap:16px;color:var(--muted);text-align:center;padding:40px;
+/* ── Body (sidebar + viewer) ── */
+.notes-body{display:flex;flex:1;overflow:hidden;min-height:0;position:relative}
+
+/* ── Sidebar drawer ── */
+.notes-drawer{
+  position:absolute;top:0;left:0;bottom:0;z-index:50;
+  width:260px;
+  background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  transform:translateX(-100%);
+  transition:transform .25s cubic-bezier(.4,0,.2,1);
+  box-shadow:none;
 }
-.notes-empty-icon{font-size:48px;opacity:.5}
-.notes-empty-title{font-family:var(--display);font-size:18px;font-weight:700;color:var(--text-secondary)}
-.notes-empty-sub{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.8;max-width:280px}
+.notes-drawer.open{
+  transform:translateX(0);
+  box-shadow:4px 0 24px rgba(0,0,0,.35);
+}
+.notes-drawer-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 14px 10px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.notes-drawer-label{
+  font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;
+  letter-spacing:1.4px;color:var(--muted);
+}
+.notes-drawer-close{
+  width:26px;height:26px;border-radius:6px;border:1px solid var(--border);
+  background:var(--surface2);color:var(--text-secondary);font-size:12px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.notes-drawer-close:hover{background:var(--surface3);color:var(--text)}
+.notes-list{flex:1;overflow-y:auto;padding:10px 10px;display:flex;flex-direction:column;gap:7px}
+.notes-list::-webkit-scrollbar{width:5px}
+.notes-list::-webkit-scrollbar-track{background:transparent}
+.notes-list::-webkit-scrollbar-thumb{background:var(--border-bright);border-radius:3px}
+
+.notes-item{
+  display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border-radius:10px;
+  border:1px solid var(--border);background:var(--surface2);
+  cursor:pointer;transition:all .18s;text-align:left;width:100%;
+}
+[data-theme="dark"] .notes-item{background:rgba(255,255,255,0.025)}
+.notes-item:hover{border-color:var(--border-bright);background:var(--surface3)}
+.notes-item.active-note{border-color:rgba(167,139,250,.55);background:rgba(167,139,250,.1)}
+[data-theme="dark"] .notes-item.active-note{box-shadow:0 0 0 1px rgba(167,139,250,.2)}
+.notes-item-icon{font-size:17px;flex-shrink:0;line-height:1;padding-top:1px}
+.notes-item-info{flex:1;min-width:0}
+.notes-item-title{font-family:var(--sans);font-size:12px;font-weight:600;color:var(--text);line-height:1.45;margin-bottom:3px}
+.notes-item.active-note .notes-item-title{color:var(--mla-accent)}
+.notes-item-sub{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+
+/* drawer scrim */
+.notes-scrim{
+  display:none;position:absolute;inset:0;z-index:49;
+  background:rgba(0,0,0,.45);backdrop-filter:blur(2px);
+}
+.notes-scrim.visible{display:block}
+
+/* ── PDF viewer ── */
+.notes-viewer-area{
+  flex:1;display:flex;flex-direction:column;overflow:hidden;
+  position:relative;background:var(--bg);
+  /* full width — drawer overlays on top, doesn't push */
+}
+.notes-empty{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:16px;color:var(--muted);text-align:center;padding:40px;
+}
+.notes-empty-icon{font-size:52px;opacity:.45;filter:grayscale(.3)}
+.notes-empty-title{font-family:var(--display);font-size:20px;font-weight:800;color:var(--text-secondary)}
+.notes-empty-sub{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.9;max-width:300px}
+.notes-empty-cta{
+  margin-top:4px;padding:9px 20px;border-radius:10px;border:1px solid rgba(167,139,250,.45);
+  background:rgba(167,139,250,.1);color:var(--mla-accent);font-family:var(--mono);
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;
+  cursor:pointer;transition:all .18s;
+}
+.notes-empty-cta:hover{background:rgba(167,139,250,.2)}
+
+.notes-frame-wrap{flex:1;position:relative;overflow:hidden}
+.notes-frame-wrap iframe{
+  position:absolute;inset:0;width:100%;height:100%;
+  border:none;display:block;background:#fff;
+}
 .notes-loading{
   position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:12px;background:var(--bg);z-index:10;transition:opacity .3s;
+  gap:14px;background:var(--bg);z-index:10;transition:opacity .35s;
 }
 .notes-loading.hidden{opacity:0;pointer-events:none}
-.notes-spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--mla-accent);border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.notes-loading-txt{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.notes-spinner{
+  width:36px;height:36px;border:3px solid var(--border);
+  border-top-color:var(--mla-accent);border-radius:50%;
+  animation:notes-spin .7s linear infinite;
+}
+@keyframes notes-spin{to{transform:rotate(360deg)}}
+.notes-loading-txt{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.5px}
+.notes-loading-sub{font-family:var(--mono);font-size:9px;color:var(--muted);opacity:.6;margin-top:-6px}
 
-/* notes layout: stacked on mobile, side-by-side on desktop */
-.notes-layout{display:flex;flex:1;overflow:hidden;min-height:0}
-@media(max-width:640px){
-  .notes-layout{flex-direction:column}
-  .notes-sidebar{width:100%;max-height:140px;flex-direction:row;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;gap:8px;padding:10px 12px;border-right:none;border-bottom:1px solid var(--border)}
-  .notes-sidebar-title{display:none}
-  .notes-item{min-width:180px;max-width:220px;flex-shrink:0}
+/* Mobile: drawer is full-width overlay */
+@media(max-width:600px){
+  .notes-drawer{width:88vw}
 }
 
 /* ═══ REVISION STATS BAR ═══ */
@@ -1156,30 +1225,40 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
     <!-- NOTES PANEL (MLA only) -->
     <div class="notes-panel" id="notes-panel">
-      <div class="notes-layout">
-        <aside class="notes-sidebar" id="notes-sidebar">
-          <div class="notes-sidebar-title">Study Notes</div>
-          <div id="notes-list"></div>
-        </aside>
-        <div class="notes-viewer" id="notes-viewer">
-          <div class="notes-empty" id="notes-empty">
-            <div class="notes-empty-icon">📄</div>
-            <div class="notes-empty-title">Select a Note</div>
-            <div class="notes-empty-sub">Choose a section from the sidebar to start reading your study notes.</div>
+      <!-- Top toolbar -->
+      <div class="notes-toolbar">
+        <button class="notes-menu-btn" id="notes-menu-btn" onclick="toggleNotesDrawer()" title="Browse notes">☰</button>
+        <div class="notes-toolbar-title placeholder" id="notes-toolbar-title">Select a note from the menu →</div>
+        <span class="notes-viewer-badge">MLA-C01</span>
+        <a class="notes-open-btn" id="notes-open-btn" href="#" target="_blank" rel="noopener">↗ Open PDF</a>
+      </div>
+      <!-- Body -->
+      <div class="notes-body">
+        <!-- Scrim (closes drawer on click outside) -->
+        <div class="notes-scrim" id="notes-scrim" onclick="closeNotesDrawer()"></div>
+        <!-- Slide-in drawer -->
+        <div class="notes-drawer" id="notes-drawer">
+          <div class="notes-drawer-header">
+            <span class="notes-drawer-label">Study Notes</span>
+            <button class="notes-drawer-close" onclick="closeNotesDrawer()">✕</button>
           </div>
-          <div id="notes-active-view" style="display:none;flex-direction:column;height:100%">
-            <div class="notes-viewer-toolbar">
-              <div class="notes-viewer-title" id="notes-active-title">—</div>
-              <span class="notes-viewer-badge">MLA-C01</span>
-              <a class="notes-open-btn" id="notes-open-link" href="#" target="_blank" rel="noopener">↗ Open PDF</a>
+          <div class="notes-list" id="notes-list"></div>
+        </div>
+        <!-- Full-width viewer -->
+        <div class="notes-viewer-area" id="notes-viewer-area">
+          <div class="notes-empty" id="notes-empty">
+            <div class="notes-empty-icon">📚</div>
+            <div class="notes-empty-title">No note selected</div>
+            <div class="notes-empty-sub">Open the menu and pick a section to start reading your study notes inline.</div>
+            <button class="notes-empty-cta" onclick="toggleNotesDrawer()">☰ Browse Notes</button>
+          </div>
+          <div class="notes-frame-wrap" id="notes-frame-wrap" style="display:none">
+            <div class="notes-loading" id="notes-loading">
+              <div class="notes-spinner"></div>
+              <div class="notes-loading-txt">Loading PDF…</div>
+              <div class="notes-loading-sub">This may take a few seconds</div>
             </div>
-            <div class="notes-frame-wrap">
-              <div class="notes-loading" id="notes-loading">
-                <div class="notes-spinner"></div>
-                <div class="notes-loading-txt">Loading PDF…</div>
-              </div>
-              <iframe id="notes-iframe" title="Study Notes PDF" allowfullscreen></iframe>
-            </div>
+            <iframe id="notes-iframe" title="Study Notes PDF" allowfullscreen></iframe>
           </div>
         </div>
       </div>
@@ -1245,8 +1324,15 @@ function openExam(id){
   document.getElementById('tab-notes').style.display=id==='mla'?'':'none';
   // Reset note viewer state
   activeNoteIdx=null;
+  notesDrawerOpen=false;
+  document.getElementById('notes-drawer').classList.remove('open');
+  document.getElementById('notes-scrim').classList.remove('visible');
   document.getElementById('notes-empty').style.display='';
-  document.getElementById('notes-active-view').style.display='none';
+  document.getElementById('notes-frame-wrap').style.display='none';
+  const titleEl=document.getElementById('notes-toolbar-title');
+  titleEl.textContent='Select a note from the menu →';
+  titleEl.classList.add('placeholder');
+  document.getElementById('notes-open-btn').classList.remove('visible');
   setupQuizConfig();
   showView('exam');
   switchMode('quiz');
@@ -1285,6 +1371,7 @@ function switchMode(mode){
   setFooterVisible(mode==='revision');
   if(mode==='revision') renderRevision();
   if(mode==='notes') renderNotesList();
+  if(mode!=='notes') closeNotesDrawer();
 }
 
 /* ═══ QUIZ / EXAM ═══ */
@@ -1870,7 +1957,7 @@ function loadRevState(){
 /* ═══ NOTES (MLA only) ═══
  * To add more PDFs, simply append an object to MLA_NOTES below.
  * Each entry needs:
- *   title  — display name shown in the sidebar and toolbar
+ *   title  — display name shown in the toolbar and drawer
  *   sub    — short subtitle (e.g. section number or topic label)
  *   file   — filename as stored in your GitHub repo under /notes/mla/
  * ════════════════════════════════════════════════════════════════ */
@@ -1887,11 +1974,27 @@ const MLA_NOTES = [
 ];
 
 let activeNoteIdx = null;
+let notesDrawerOpen = false;
+
+function toggleNotesDrawer(){
+  notesDrawerOpen ? closeNotesDrawer() : openNotesDrawer();
+}
+function openNotesDrawer(){
+  notesDrawerOpen = true;
+  renderNotesList();
+  document.getElementById('notes-drawer').classList.add('open');
+  document.getElementById('notes-scrim').classList.add('visible');
+}
+function closeNotesDrawer(){
+  notesDrawerOpen = false;
+  document.getElementById('notes-drawer').classList.remove('open');
+  document.getElementById('notes-scrim').classList.remove('visible');
+}
 
 function renderNotesList() {
   const list = document.getElementById('notes-list');
   if (!MLA_NOTES.length) {
-    list.innerHTML = '<div style="font-family:var(--mono);font-size:11px;color:var(--muted);padding:8px 4px">No notes available yet.</div>';
+    list.innerHTML = '<div style="font-family:var(--mono);font-size:11px;color:var(--muted);padding:10px 4px">No notes available yet.</div>';
     return;
   }
   list.innerHTML = MLA_NOTES.map((n, i) => `
@@ -1906,31 +2009,49 @@ function renderNotesList() {
 
 function loadNote(idx) {
   activeNoteIdx = idx;
+  closeNotesDrawer();
   renderNotesList();
+
   const note = MLA_NOTES[idx];
-  const url = MLA_NOTES_BASE + encodeURIComponent(note.file);
-  // Use Google Docs viewer for reliable inline rendering across browsers
-  const viewerUrl = 'https://docs.google.com/viewer?embedded=true&url=' + encodeURIComponent(url);
+  const rawUrl = MLA_NOTES_BASE + encodeURIComponent(note.file);
+  // Google Docs viewer for reliable cross-browser inline PDF rendering
+  const viewerUrl = 'https://docs.google.com/viewer?embedded=true&url=' + encodeURIComponent(rawUrl);
 
+  // Update toolbar
+  const titleEl = document.getElementById('notes-toolbar-title');
+  titleEl.textContent = note.title;
+  titleEl.classList.remove('placeholder');
+
+  const openBtn = document.getElementById('notes-open-btn');
+  openBtn.href = rawUrl;
+  openBtn.classList.add('visible');
+
+  // Switch from empty state to frame
   document.getElementById('notes-empty').style.display = 'none';
-  const activeView = document.getElementById('notes-active-view');
-  activeView.style.display = 'flex';
-  document.getElementById('notes-active-title').textContent = note.title;
-  document.getElementById('notes-open-link').href = url;
+  const frameWrap = document.getElementById('notes-frame-wrap');
+  frameWrap.style.display = 'flex';
+  frameWrap.style.flexDirection = 'column';
+  frameWrap.style.flex = '1';
 
+  // Show loading spinner, load iframe
   const loading = document.getElementById('notes-loading');
   const iframe = document.getElementById('notes-iframe');
   loading.classList.remove('hidden');
   iframe.src = '';
-  // Small delay so the spinner renders before we set the heavy src
   setTimeout(() => {
     iframe.onload = () => loading.classList.add('hidden');
     iframe.src = viewerUrl;
-  }, 80);
+    // Fallback: hide spinner after 30s if onload doesn't fire (Google Docs quirk)
+    setTimeout(() => loading.classList.add('hidden'), 30000);
+  }, 100);
 }
 
 /* ═══ KEYBOARD SHORTCUTS ═══ */
 document.addEventListener('keydown',function(e){
+  if(currentMode==='notes'){
+    if(e.key==='Escape') closeNotesDrawer();
+    return;
+  }
   if(currentMode!=='revision')return;
   if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
   if(e.key==='ArrowRight'||e.key==='n'){e.preventDefault();revPage(1);}
