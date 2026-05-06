@@ -935,6 +935,82 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .kbd-hint{position:fixed;bottom:70px;right:16px;z-index:200;font-family:var(--mono);font-size:10px;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 12px;line-height:1.8;opacity:0.7;pointer-events:none;display:none}
 @media(min-width:768px){.kbd-hint{display:block}}
 
+/* ═══ NOTES PANEL ═══ */
+.notes-panel{display:none;flex-direction:column;height:100%;overflow:hidden}
+.notes-panel.active{display:flex}
+.notes-sidebar{
+  width:240px;flex-shrink:0;border-right:1px solid var(--border);
+  background:var(--surface);overflow-y:auto;padding:16px 12px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.notes-sidebar-title{
+  font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;
+  letter-spacing:1.2px;color:var(--muted);padding:0 4px;margin-bottom:4px;
+}
+.notes-item{
+  display:flex;align-items:flex-start;gap:10px;padding:12px 12px;border-radius:10px;
+  border:1px solid var(--border);background:var(--surface2);
+  cursor:pointer;transition:all .18s;text-align:left;width:100%;
+}
+[data-theme="dark"] .notes-item{background:rgba(255,255,255,0.02)}
+.notes-item:hover{border-color:var(--border-bright);background:var(--surface3)}
+.notes-item.active-note{
+  border-color:rgba(167,139,250,.5);background:rgba(167,139,250,.08);
+}
+[data-theme="dark"] .notes-item.active-note{box-shadow:0 0 0 1px rgba(167,139,250,.15)}
+.notes-item-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.notes-item-info{flex:1;min-width:0}
+.notes-item-title{font-family:var(--sans);font-size:12px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:2px}
+.notes-item.active-note .notes-item-title{color:var(--mla-accent)}
+.notes-item-sub{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+
+.notes-viewer{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+.notes-viewer-toolbar{
+  padding:10px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;flex-shrink:0;
+  background:var(--nav-bg);backdrop-filter:blur(16px);
+}
+.notes-viewer-title{font-family:var(--display);font-size:13px;font-weight:700;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.notes-viewer-badge{
+  font-family:var(--mono);font-size:9px;font-weight:700;padding:3px 9px;border-radius:20px;
+  background:rgba(167,139,250,.12);color:var(--mla-accent);border:1px solid rgba(167,139,250,.3);
+  letter-spacing:.8px;text-transform:uppercase;white-space:nowrap;
+}
+.notes-open-btn{
+  font-family:var(--mono);font-size:9px;font-weight:700;padding:5px 12px;border-radius:8px;
+  border:1px solid rgba(167,139,250,.4);background:rgba(167,139,250,.1);color:var(--mla-accent);
+  cursor:pointer;transition:all .18s;text-decoration:none;display:flex;align-items:center;gap:5px;
+  text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;
+}
+.notes-open-btn:hover{background:rgba(167,139,250,.18);border-color:rgba(167,139,250,.6)}
+
+.notes-frame-wrap{flex:1;overflow:hidden;position:relative}
+.notes-frame-wrap iframe{width:100%;height:100%;border:none;display:block;background:#fff}
+.notes-empty{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:100%;gap:16px;color:var(--muted);text-align:center;padding:40px;
+}
+.notes-empty-icon{font-size:48px;opacity:.5}
+.notes-empty-title{font-family:var(--display);font-size:18px;font-weight:700;color:var(--text-secondary)}
+.notes-empty-sub{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.8;max-width:280px}
+.notes-loading{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:12px;background:var(--bg);z-index:10;transition:opacity .3s;
+}
+.notes-loading.hidden{opacity:0;pointer-events:none}
+.notes-spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--mla-accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.notes-loading-txt{font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+/* notes layout: stacked on mobile, side-by-side on desktop */
+.notes-layout{display:flex;flex:1;overflow:hidden;min-height:0}
+@media(max-width:640px){
+  .notes-layout{flex-direction:column}
+  .notes-sidebar{width:100%;max-height:140px;flex-direction:row;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;gap:8px;padding:10px 12px;border-right:none;border-bottom:1px solid var(--border)}
+  .notes-sidebar-title{display:none}
+  .notes-item{min-width:180px;max-width:220px;flex-shrink:0}
+}
+
 /* ═══ REVISION STATS BAR ═══ */
 .rev-stats-mini{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
 .rev-stat-chip{font-family:var(--mono);font-size:10px;padding:4px 10px;border-radius:20px;font-weight:600;border:1px solid transparent;display:flex;align-items:center;gap:4px}
@@ -981,7 +1057,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <h2>AWS ML Engineer Associate</h2>
       <p>SageMaker, Bedrock, MLOps, model deployment, feature engineering, monitoring, and security — with explanations.</p>
       <div class="exam-card-footer">
-        <span class="exam-pill">278 Questions</span><span class="exam-pill">With Explanations</span><span class="exam-pill">Quiz + Revision</span>
+        <span class="exam-pill">278 Questions</span><span class="exam-pill">With Explanations</span><span class="exam-pill">Quiz + Revision + Notes</span>
       </div>
     </div>
     <div class="exam-card dea" onclick="openExam('dea')">
@@ -1020,6 +1096,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div class="mode-tabs-bar">
     <button class="mode-tab-btn active-tab" id="tab-quiz" onclick="switchMode('quiz')">📝 Exam Mode</button>
     <button class="mode-tab-btn" id="tab-rev" onclick="switchMode('revision')">📖 Revision Mode</button>
+    <button class="mode-tab-btn" id="tab-notes" onclick="switchMode('notes')" style="display:none">📄 Notes</button>
   </div>
 
   <!-- Scrollable content (bottom shrinks when footer visible) -->
@@ -1074,6 +1151,37 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
       <div class="rev-main" id="rev-main"><div class="kbd-hint">← → Navigate pages</div>
         <div class="rev-inner" id="rev-inner"></div>
+      </div>
+    </div>
+
+    <!-- NOTES PANEL (MLA only) -->
+    <div class="notes-panel" id="notes-panel">
+      <div class="notes-layout">
+        <aside class="notes-sidebar" id="notes-sidebar">
+          <div class="notes-sidebar-title">Study Notes</div>
+          <div id="notes-list"></div>
+        </aside>
+        <div class="notes-viewer" id="notes-viewer">
+          <div class="notes-empty" id="notes-empty">
+            <div class="notes-empty-icon">📄</div>
+            <div class="notes-empty-title">Select a Note</div>
+            <div class="notes-empty-sub">Choose a section from the sidebar to start reading your study notes.</div>
+          </div>
+          <div id="notes-active-view" style="display:none;flex-direction:column;height:100%">
+            <div class="notes-viewer-toolbar">
+              <div class="notes-viewer-title" id="notes-active-title">—</div>
+              <span class="notes-viewer-badge">MLA-C01</span>
+              <a class="notes-open-btn" id="notes-open-link" href="#" target="_blank" rel="noopener">↗ Open PDF</a>
+            </div>
+            <div class="notes-frame-wrap">
+              <div class="notes-loading" id="notes-loading">
+                <div class="notes-spinner"></div>
+                <div class="notes-loading-txt">Loading PDF…</div>
+              </div>
+              <iframe id="notes-iframe" title="Study Notes PDF" allowfullscreen></iframe>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1133,6 +1241,12 @@ function openExam(id){
   Object.assign(quizState,{questions:[],current:0,answers:{},score:{correct:0,wrong:0},done:false,questionTimes:{}});
   Object.assign(revState,{answers:{},filter:'all',topic:'All Topics',search:'',page:0,pendingRev:{}});loadRevState();
   document.querySelectorAll('.rev-filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.filter==='all'));
+  // Show Notes tab only for MLA
+  document.getElementById('tab-notes').style.display=id==='mla'?'':'none';
+  // Reset note viewer state
+  activeNoteIdx=null;
+  document.getElementById('notes-empty').style.display='';
+  document.getElementById('notes-active-view').style.display='none';
   setupQuizConfig();
   showView('exam');
   switchMode('quiz');
@@ -1152,9 +1266,11 @@ function switchMode(mode){
   currentMode=mode;
   document.getElementById('tab-quiz').classList.toggle('active-tab',mode==='quiz');
   document.getElementById('tab-rev').classList.toggle('active-tab',mode==='revision');
+  document.getElementById('tab-notes').classList.toggle('active-tab',mode==='notes');
   // panels
   document.getElementById('quiz-panel').classList.toggle('active',mode==='quiz');
   document.getElementById('revision-panel').classList.toggle('active',mode==='revision');
+  document.getElementById('notes-panel').classList.toggle('active',mode==='notes');
   // header items
   document.getElementById('rev-menu-btn').style.display=mode==='revision'?'flex':'none';
   document.getElementById('exam-header-stats').style.display='none'; // hidden in exam mode
@@ -1168,6 +1284,7 @@ function switchMode(mode){
   // footer: only show in revision
   setFooterVisible(mode==='revision');
   if(mode==='revision') renderRevision();
+  if(mode==='notes') renderNotesList();
 }
 
 /* ═══ QUIZ / EXAM ═══ */
@@ -1750,6 +1867,68 @@ function loadRevState(){
     if(saved){revState.answers=JSON.parse(saved);}
   }catch(e){}
 }
+/* ═══ NOTES (MLA only) ═══
+ * To add more PDFs, simply append an object to MLA_NOTES below.
+ * Each entry needs:
+ *   title  — display name shown in the sidebar and toolbar
+ *   sub    — short subtitle (e.g. section number or topic label)
+ *   file   — filename as stored in your GitHub repo under /notes/mla/
+ * ════════════════════════════════════════════════════════════════ */
+const MLA_NOTES_BASE = 'https://raw.githubusercontent.com/pratik-p-crest/AWS-Exam-Prep/main/notes/mla/';
+
+const MLA_NOTES = [
+  {
+    title: 'Section 2 — Data Ingestion & Storage',
+    sub:   'MLA-C01 · Section 2',
+    file:  'AWS_ML_Section2_Data_Ingestion_Storage.pdf'
+  },
+  // ── Add more notes below this line ──
+  // { title: 'Section 3 — Feature Engineering', sub: 'MLA-C01 · Section 3', file: 'AWS_ML_Section3_Feature_Engineering.pdf' },
+];
+
+let activeNoteIdx = null;
+
+function renderNotesList() {
+  const list = document.getElementById('notes-list');
+  if (!MLA_NOTES.length) {
+    list.innerHTML = '<div style="font-family:var(--mono);font-size:11px;color:var(--muted);padding:8px 4px">No notes available yet.</div>';
+    return;
+  }
+  list.innerHTML = MLA_NOTES.map((n, i) => `
+    <button class="notes-item${activeNoteIdx === i ? ' active-note' : ''}" onclick="loadNote(${i})">
+      <span class="notes-item-icon">📄</span>
+      <div class="notes-item-info">
+        <div class="notes-item-title">${n.title}</div>
+        <div class="notes-item-sub">${n.sub}</div>
+      </div>
+    </button>`).join('');
+}
+
+function loadNote(idx) {
+  activeNoteIdx = idx;
+  renderNotesList();
+  const note = MLA_NOTES[idx];
+  const url = MLA_NOTES_BASE + encodeURIComponent(note.file);
+  // Use Google Docs viewer for reliable inline rendering across browsers
+  const viewerUrl = 'https://docs.google.com/viewer?embedded=true&url=' + encodeURIComponent(url);
+
+  document.getElementById('notes-empty').style.display = 'none';
+  const activeView = document.getElementById('notes-active-view');
+  activeView.style.display = 'flex';
+  document.getElementById('notes-active-title').textContent = note.title;
+  document.getElementById('notes-open-link').href = url;
+
+  const loading = document.getElementById('notes-loading');
+  const iframe = document.getElementById('notes-iframe');
+  loading.classList.remove('hidden');
+  iframe.src = '';
+  // Small delay so the spinner renders before we set the heavy src
+  setTimeout(() => {
+    iframe.onload = () => loading.classList.add('hidden');
+    iframe.src = viewerUrl;
+  }, 80);
+}
+
 /* ═══ KEYBOARD SHORTCUTS ═══ */
 document.addEventListener('keydown',function(e){
   if(currentMode!=='revision')return;
