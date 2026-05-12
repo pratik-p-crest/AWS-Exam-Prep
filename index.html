@@ -976,6 +976,14 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 }
 .notes-open-btn.visible{display:flex}
 .notes-open-btn:hover{background:rgba(167,139,250,.2);border-color:rgba(167,139,250,.7)}
+.notes-fs-btn{
+  font-family:var(--mono);font-size:9px;font-weight:700;padding:5px 11px;border-radius:8px;
+  border:1px solid var(--border);background:var(--surface2);color:var(--text-secondary);
+  cursor:pointer;transition:all .18s;display:none;align-items:center;gap:5px;
+  text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;flex-shrink:0;
+}
+.notes-fs-btn.visible{display:flex}
+.notes-fs-btn:hover{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.5);color:var(--mla-accent)}
 
 /* ── Body (sidebar + viewer) ── */
 .notes-body{display:flex;flex:1;overflow:hidden;min-height:0;position:relative}
@@ -1344,6 +1352,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         <button class="notes-menu-btn" id="notes-menu-btn" onclick="toggleNotesDrawer()" title="Browse notes">☰</button>
         <div class="notes-toolbar-title placeholder" id="notes-toolbar-title">Select a note from the menu →</div>
         <span class="notes-viewer-badge">MLA-C01</span>
+        <button class="notes-fs-btn" id="notes-fs-btn" title="Fullscreen">⛶ Fullscreen</button>
         <a class="notes-open-btn" id="notes-open-btn" href="#" target="_blank" rel="noopener">↗ Open PDF</a>
       </div>
       <!-- Body -->
@@ -1486,6 +1495,18 @@ async function openExam(id){
   titleEl.textContent='Select a note from the menu →';
   titleEl.classList.add('placeholder');
   document.getElementById('notes-open-btn').classList.remove('visible');
+  document.getElementById('notes-fs-btn').classList.remove('visible');
+  // Reset inline viewer
+  const inlineIframe = document.getElementById('notes-iframe');
+  if (inlineIframe) inlineIframe.src = '';
+  document.getElementById('notes-frame-wrap').style.display = 'none';
+  document.getElementById('notes-empty').style.display = '';
+  document.getElementById('notes-loading').classList.add('hidden');
+  // Reset fullscreen
+  const fsIframe = document.getElementById('pdf-fs-iframe');
+  if (fsIframe) fsIframe.src = '';
+  document.getElementById('pdf-fullscreen').classList.remove('open');
+  document.getElementById('pdf-section-toggle').classList.remove('visible');
   showView('exam');
   switchMode('quiz');
   // Show loading state while fetching questions
@@ -2172,30 +2193,29 @@ function renderNotesList() {
     </button>`).join('');
 }
 
-function loadNote(idx) {
-  activeNoteIdx = idx;
-  closeNotesDrawer();
-  renderNotesList();
+/* ═══ NOTES — CORE HELPERS ═══ */
 
+// Update inline toolbar title, Open PDF link, and button visibility
+function syncInlineToolbar(idx) {
   const note = MLA_NOTES[idx];
+  if (!note) return;
   const rawUrl = MLA_NOTES_BASE + encodeURIComponent(note.file);
-  const viewerUrl = 'https://docs.google.com/viewer?embedded=true&url=' + encodeURIComponent(rawUrl);
-
-  // Update inline toolbar (keeps existing inline viewer in sync)
   const titleEl = document.getElementById('notes-toolbar-title');
   titleEl.textContent = note.title;
   titleEl.classList.remove('placeholder');
-  const openBtn = document.getElementById('notes-open-btn');
-  openBtn.href = rawUrl;
-  openBtn.classList.add('visible');
+  document.getElementById('notes-open-btn').href = rawUrl;
+  document.getElementById('notes-open-btn').classList.add('visible');
+  document.getElementById('notes-fs-btn').classList.add('visible');
+}
 
-  // Switch from empty state to frame (inline viewer)
+// Load PDF into the inline background iframe (hidden behind fullscreen)
+function loadInlineIframe(idx) {
+  const note = MLA_NOTES[idx];
+  const rawUrl = MLA_NOTES_BASE + encodeURIComponent(note.file);
+  const viewerUrl = 'https://docs.google.com/viewer?embedded=true&url=' + encodeURIComponent(rawUrl);
   document.getElementById('notes-empty').style.display = 'none';
   const frameWrap = document.getElementById('notes-frame-wrap');
-  frameWrap.style.display = 'flex';
-  frameWrap.style.flexDirection = 'column';
-  frameWrap.style.flex = '1';
-
+  frameWrap.style.cssText = 'display:flex;flex-direction:column;flex:1';
   const loading = document.getElementById('notes-loading');
   const iframe = document.getElementById('notes-iframe');
   loading.classList.remove('hidden');
@@ -2204,25 +2224,16 @@ function loadNote(idx) {
     iframe.onload = () => loading.classList.add('hidden');
     iframe.src = viewerUrl;
     setTimeout(() => loading.classList.add('hidden'), 30000);
-  }, 100);
-
-  // Open fullscreen immediately
-  openPdfFullscreen(idx);
+  }, 80);
 }
 
-/* ═══ FULLSCREEN PDF VIEWER ═══ */
-let pdfFsMenuOpen = false;
-
-function openPdfFullscreen(idx) {
+// Load PDF into the fullscreen iframe
+function loadFsIframe(idx) {
   const note = MLA_NOTES[idx];
   const rawUrl = MLA_NOTES_BASE + encodeURIComponent(note.file);
   const viewerUrl = 'https://docs.google.com/viewer?embedded=true&url=' + encodeURIComponent(rawUrl);
-
-  // Update fullscreen bar
   document.getElementById('pdf-fs-title').textContent = note.title;
   document.getElementById('pdf-fs-open-link').href = rawUrl;
-
-  // Reset and load iframe
   const spinner = document.getElementById('pdf-fs-spinner');
   const fsIframe = document.getElementById('pdf-fs-iframe');
   spinner.classList.remove('hidden');
@@ -2231,18 +2242,31 @@ function openPdfFullscreen(idx) {
     fsIframe.onload = () => spinner.classList.add('hidden');
     fsIframe.src = viewerUrl;
     setTimeout(() => spinner.classList.add('hidden'), 30000);
-  }, 100);
+  }, 80);
+}
 
-  // Show overlay
+/* ═══ ENTRY POINT: selecting a note from the drawer ═══ */
+function loadNote(idx) {
+  activeNoteIdx = idx;
+  closeNotesDrawer();
+  syncInlineToolbar(idx);
+  renderNotesList();
+  loadInlineIframe(idx);   // load inline in background
+  openPdfFullscreen(idx);  // open fullscreen on top
+}
+
+/* ═══ FULLSCREEN PDF VIEWER ═══ */
+let pdfFsMenuOpen = false;
+
+function openPdfFullscreen(idx) {
+  if (idx === null || idx === undefined || !MLA_NOTES[idx]) return;
+  activeNoteIdx = idx;
+  syncInlineToolbar(idx);
+  renderNotesList();
+  loadFsIframe(idx);
   document.getElementById('pdf-fullscreen').classList.add('open');
-
-  // Build sections list
   renderFsSections();
-  // Show floating toggle only if there are multiple sections
-  const toggle = document.getElementById('pdf-section-toggle');
-  toggle.classList.toggle('visible', MLA_NOTES.length > 1);
-
-  // Prevent body scroll
+  document.getElementById('pdf-section-toggle').classList.toggle('visible', MLA_NOTES.length > 1);
   document.body.style.overflow = 'hidden';
 }
 
@@ -2251,18 +2275,21 @@ function closePdfFullscreen() {
   document.getElementById('pdf-section-toggle').classList.remove('visible');
   closeSectionsMenu();
   document.body.style.overflow = '';
+  // Sync inline iframe to match whatever is active now
+  if (activeNoteIdx !== null) {
+    syncInlineToolbar(activeNoteIdx);
+    renderNotesList();
+    loadInlineIframe(activeNoteIdx);
+  }
 }
 
-function toggleSectionsMenu() {
-  pdfFsMenuOpen ? closeSectionsMenu() : openSectionsMenu();
-}
-
+/* ═══ SECTION SWITCHER ═══ */
+function toggleSectionsMenu() { pdfFsMenuOpen ? closeSectionsMenu() : openSectionsMenu(); }
 function openSectionsMenu() {
   pdfFsMenuOpen = true;
   document.getElementById('pdf-sections-menu').classList.add('open');
   document.getElementById('pdf-pill-arrow').textContent = '▼';
 }
-
 function closeSectionsMenu() {
   pdfFsMenuOpen = false;
   document.getElementById('pdf-sections-menu').classList.remove('open');
@@ -2281,37 +2308,16 @@ function renderFsSections() {
       </div>
       <span class="pdf-sec-tick">✓</span>
     </button>`).join('');
-  // Update pill label
   const cur = MLA_NOTES[activeNoteIdx];
-  const shortTitle = cur ? cur.sub || cur.title : 'Sections';
-  document.getElementById('pdf-pill-label').textContent = shortTitle;
+  document.getElementById('pdf-pill-label').textContent = cur ? cur.sub || cur.title : 'Sections';
 }
 
 function switchFsSection(idx) {
   if (idx === activeNoteIdx) { closeSectionsMenu(); return; }
   activeNoteIdx = idx;
-  renderNotesList();   // keep inline sidebar in sync
   renderFsSections();
   closeSectionsMenu();
-
-  const note = MLA_NOTES[idx];
-  const rawUrl = MLA_NOTES_BASE + encodeURIComponent(note.file);
-  const viewerUrl = 'https://docs.google.com/viewer?embedded=true&url=' + encodeURIComponent(rawUrl);
-
-  // Update fullscreen bar
-  document.getElementById('pdf-fs-title').textContent = note.title;
-  document.getElementById('pdf-fs-open-link').href = rawUrl;
-
-  // Reload iframe
-  const spinner = document.getElementById('pdf-fs-spinner');
-  const fsIframe = document.getElementById('pdf-fs-iframe');
-  spinner.classList.remove('hidden');
-  fsIframe.src = '';
-  setTimeout(() => {
-    fsIframe.onload = () => spinner.classList.add('hidden');
-    fsIframe.src = viewerUrl;
-    setTimeout(() => spinner.classList.add('hidden'), 30000);
-  }, 100);
+  loadFsIframe(idx);
 }
 
 // Close sections menu when clicking outside
@@ -2319,6 +2325,11 @@ document.addEventListener('click', function(e) {
   if (!pdfFsMenuOpen) return;
   const toggle = document.getElementById('pdf-section-toggle');
   if (toggle && !toggle.contains(e.target)) closeSectionsMenu();
+});
+
+// Wire up fullscreen button safely after DOM ready
+document.getElementById('notes-fs-btn').addEventListener('click', function() {
+  if (activeNoteIdx !== null) openPdfFullscreen(activeNoteIdx);
 });
 
 /* ═══ KEYBOARD SHORTCUTS ═══ */
