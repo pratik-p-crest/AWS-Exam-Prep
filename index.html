@@ -13,7 +13,7 @@
 /* ═══ THEME TOKENS ═══ */
 :root {
   --mono:'JetBrains Mono',monospace; --sans:'Plus Jakarta Sans',sans-serif; --display:'Syne',sans-serif;
-  --header-h:58px; --tabs-h:50px; --footer-h:60px;
+  --header-h:42px; --tabs-h:38px; --footer-h:60px;
   --radius-sm:8px; --radius-md:12px; --radius-lg:16px;
   --tt:background .25s,color .25s,border-color .25s,box-shadow .25s,opacity .25s;
   --yellow:#f59e0b;
@@ -164,7 +164,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .back-btn{
   display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);
   color:var(--text-secondary);font-family:var(--mono);font-size:10px;font-weight:600;
-  text-transform:uppercase;letter-spacing:.5px;padding:7px 13px;border-radius:9px;
+  text-transform:uppercase;letter-spacing:.5px;padding:5px 10px;border-radius:9px;
   cursor:pointer;transition:all .18s;white-space:nowrap;
 }
 [data-theme="light"] .back-btn{background:#ffffff;border-color:var(--border-bright);color:var(--text-secondary)}
@@ -190,7 +190,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   display:flex;align-items:center;padding:0 16px;gap:10px;transition:var(--tt);
 }
 .mode-tab-btn{
-  flex:1;height:36px;border:1px solid var(--border);border-radius:9px;
+  flex:1;height:28px;border:1px solid var(--border);border-radius:9px;
   background:transparent;color:var(--muted);font-family:var(--mono);font-size:10px;
   font-weight:700;text-transform:uppercase;letter-spacing:.8px;cursor:pointer;
   transition:all .18s;display:flex;align-items:center;justify-content:center;gap:6px;
@@ -944,7 +944,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 /* ── Toolbar (fixed at top of notes panel) ── */
 .notes-toolbar{
-  height:46px;flex-shrink:0;
+  height:36px;flex-shrink:0;
   background:var(--nav-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   border-bottom:1px solid var(--border);
   display:flex;align-items:center;padding:0 12px;gap:8px;
@@ -952,7 +952,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 }
 [data-theme="light"] .notes-toolbar{box-shadow:0 1px 0 var(--border)}
 .notes-menu-btn{
-  height:32px;width:32px;border-radius:8px;border:1px solid var(--border);
+  height:26px;width:26px;border-radius:8px;border:1px solid var(--border);
   background:var(--surface2);color:var(--text-secondary);font-size:14px;
   cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;
   flex-shrink:0;
@@ -1080,6 +1080,119 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 @media(max-width:600px){
   .notes-drawer{width:88vw}
 }
+
+/* ═══ FULLSCREEN PDF OVERLAY ═══ */
+.pdf-fullscreen{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  display:none;flex-direction:column;
+}
+.pdf-fullscreen.open{display:flex}
+
+.pdf-fs-bar{
+  height:44px;flex-shrink:0;
+  background:var(--nav-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 12px;gap:8px;
+}
+[data-theme="light"] .pdf-fs-bar{box-shadow:0 1px 0 var(--border)}
+.pdf-fs-title{
+  font-family:var(--display);font-size:13px;font-weight:700;color:var(--text);
+  flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.pdf-fs-badge{
+  font-family:var(--mono);font-size:9px;font-weight:700;padding:3px 9px;border-radius:20px;
+  background:rgba(167,139,250,.12);color:var(--mla-accent);border:1px solid rgba(167,139,250,.3);
+  letter-spacing:.8px;text-transform:uppercase;white-space:nowrap;flex-shrink:0;
+}
+.pdf-fs-close{
+  height:28px;padding:0 12px;border-radius:8px;
+  border:1px solid var(--border);background:var(--surface2);
+  color:var(--text-secondary);font-family:var(--mono);font-size:10px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.5px;cursor:pointer;transition:all .18s;
+  display:flex;align-items:center;gap:5px;flex-shrink:0;
+}
+.pdf-fs-close:hover{color:var(--text);border-color:var(--border-bright);background:var(--surface3)}
+.pdf-fs-open{
+  font-family:var(--mono);font-size:9px;font-weight:700;padding:5px 12px;border-radius:8px;
+  border:1px solid rgba(167,139,250,.4);background:rgba(167,139,250,.1);color:var(--mla-accent);
+  cursor:pointer;transition:all .18s;text-decoration:none;display:flex;align-items:center;gap:5px;
+  text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;flex-shrink:0;
+}
+.pdf-fs-open:hover{background:rgba(167,139,250,.22);border-color:rgba(167,139,250,.7)}
+
+.pdf-fs-body{flex:1;position:relative;overflow:hidden;background:var(--bg)}
+.pdf-fs-body iframe{position:absolute;inset:0;width:100%;height:100%;border:none;background:#fff}
+.pdf-fs-spinner{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;background:var(--bg);z-index:5;transition:opacity .4s;
+}
+.pdf-fs-spinner.hidden{opacity:0;pointer-events:none}
+.pdf-fs-spin-ring{
+  width:38px;height:38px;border:3px solid var(--border);
+  border-top-color:var(--mla-accent);border-radius:50%;
+  animation:notes-spin .7s linear infinite;
+}
+.pdf-fs-spin-txt{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.5px}
+
+/* Floating section toggle */
+.pdf-section-toggle{
+  position:fixed;bottom:24px;right:20px;z-index:10000;
+  display:none;flex-direction:column;align-items:flex-end;gap:8px;
+}
+.pdf-section-toggle.visible{display:flex}
+
+.pdf-toggle-pill{
+  display:flex;align-items:center;gap:8px;
+  background:var(--mla-accent);color:#fff;
+  font-family:var(--mono);font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.6px;
+  padding:10px 16px;border-radius:28px;border:none;
+  cursor:pointer;
+  box-shadow:0 4px 20px rgba(167,139,250,.45),0 1px 4px rgba(0,0,0,.25);
+  transition:transform .18s,box-shadow .18s;white-space:nowrap;
+}
+.pdf-toggle-pill:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(167,139,250,.55)}
+.pdf-toggle-pill:active{transform:scale(.96)}
+[data-theme="light"] .pdf-toggle-pill{box-shadow:0 4px 16px rgba(109,40,217,.35)}
+
+.pdf-sections-menu{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 8px 32px rgba(0,0,0,.35),0 2px 8px rgba(0,0,0,.2);
+  min-width:220px;max-width:80vw;
+  transform:translateY(10px) scale(.96);opacity:0;pointer-events:none;
+  transition:opacity .2s,transform .2s;
+}
+[data-theme="light"] .pdf-sections-menu{box-shadow:0 4px 24px rgba(15,23,42,.15)}
+.pdf-sections-menu.open{opacity:1;pointer-events:all;transform:translateY(0) scale(1)}
+
+.pdf-sections-header{
+  padding:10px 14px 8px;border-bottom:1px solid var(--border);
+  font-family:var(--mono);font-size:9px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:1.4px;font-weight:700;
+}
+.pdf-section-item{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 14px;cursor:pointer;
+  border:none;background:transparent;width:100%;text-align:left;
+  transition:background .12s;border-bottom:1px solid var(--border);
+  color:var(--text);
+}
+.pdf-section-item:last-child{border-bottom:none}
+.pdf-section-item:hover{background:var(--surface2)}
+.pdf-section-item.active-sec{background:rgba(167,139,250,.08)}
+[data-theme="dark"] .pdf-section-item.active-sec{background:rgba(167,139,250,.1)}
+.pdf-sec-icon{font-size:15px;flex-shrink:0}
+.pdf-sec-info{flex:1;min-width:0}
+.pdf-sec-title{
+  font-family:var(--sans);font-size:12px;font-weight:600;color:var(--text);
+  line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.pdf-section-item.active-sec .pdf-sec-title{color:var(--mla-accent)}
+.pdf-sec-sub{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-top:2px}
+.pdf-sec-tick{font-size:12px;color:var(--mla-accent);flex-shrink:0;opacity:0;transition:opacity .15s}
+.pdf-section-item.active-sec .pdf-sec-tick{opacity:1}
 
 /* ═══ REVISION STATS BAR ═══ */
 .rev-stats-mini{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
@@ -1277,6 +1390,34 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   </div>
 
 </div><!-- /view-exam -->
+
+<!-- ════════════════ FULLSCREEN PDF OVERLAY ════════════════ -->
+<div class="pdf-fullscreen" id="pdf-fullscreen">
+  <div class="pdf-fs-bar">
+    <button class="pdf-fs-close" onclick="closePdfFullscreen()">✕ Close</button>
+    <div class="pdf-fs-title" id="pdf-fs-title">Study Notes</div>
+    <span class="pdf-fs-badge">MLA-C01</span>
+    <a class="pdf-fs-open" id="pdf-fs-open-link" href="#" target="_blank" rel="noopener">↗ Open PDF</a>
+  </div>
+  <div class="pdf-fs-body">
+    <div class="pdf-fs-spinner" id="pdf-fs-spinner">
+      <div class="pdf-fs-spin-ring"></div>
+      <div class="pdf-fs-spin-txt">Loading PDF…</div>
+    </div>
+    <iframe id="pdf-fs-iframe" title="Study Notes Fullscreen" allowfullscreen></iframe>
+  </div>
+</div>
+
+<!-- Floating section switcher -->
+<div class="pdf-section-toggle" id="pdf-section-toggle">
+  <div class="pdf-sections-menu" id="pdf-sections-menu">
+    <div class="pdf-sections-header">📚 Switch Section</div>
+    <div id="pdf-sections-list"></div>
+  </div>
+  <button class="pdf-toggle-pill" id="pdf-toggle-pill" onclick="toggleSectionsMenu()">
+    <span>📑</span><span id="pdf-pill-label">Sections</span><span id="pdf-pill-arrow">▲</span>
+  </button>
+</div>
 
 <script>
 /* ═══ DATA ═══ */
@@ -1989,8 +2130,12 @@ const MLA_NOTES = [
     sub:   'MLA-C01 · Section 2',
     file:  'AWS_ML_Section2_Data_Ingestion_Storage.pdf'
   },
+  {
+    title: 'Section 3 Part 1 — Data Transformation & Feature Engineering',
+    sub:   'MLA-C01 · Section 3 · Part 1 of 2',
+    file:  'AWS_ML_Section3_Part1_Data_Transformation.pdf'
+  },
   // ── Add more notes below this line ──
-  // { title: 'Section 3 — Feature Engineering', sub: 'MLA-C01 · Section 3', file: 'AWS_ML_Section3_Feature_Engineering.pdf' },
 ];
 
 let activeNoteIdx = null;
@@ -2034,26 +2179,23 @@ function loadNote(idx) {
 
   const note = MLA_NOTES[idx];
   const rawUrl = MLA_NOTES_BASE + encodeURIComponent(note.file);
-  // Google Docs viewer for reliable cross-browser inline PDF rendering
   const viewerUrl = 'https://docs.google.com/viewer?embedded=true&url=' + encodeURIComponent(rawUrl);
 
-  // Update toolbar
+  // Update inline toolbar (keeps existing inline viewer in sync)
   const titleEl = document.getElementById('notes-toolbar-title');
   titleEl.textContent = note.title;
   titleEl.classList.remove('placeholder');
-
   const openBtn = document.getElementById('notes-open-btn');
   openBtn.href = rawUrl;
   openBtn.classList.add('visible');
 
-  // Switch from empty state to frame
+  // Switch from empty state to frame (inline viewer)
   document.getElementById('notes-empty').style.display = 'none';
   const frameWrap = document.getElementById('notes-frame-wrap');
   frameWrap.style.display = 'flex';
   frameWrap.style.flexDirection = 'column';
   frameWrap.style.flex = '1';
 
-  // Show loading spinner, load iframe
   const loading = document.getElementById('notes-loading');
   const iframe = document.getElementById('notes-iframe');
   loading.classList.remove('hidden');
@@ -2061,13 +2203,129 @@ function loadNote(idx) {
   setTimeout(() => {
     iframe.onload = () => loading.classList.add('hidden');
     iframe.src = viewerUrl;
-    // Fallback: hide spinner after 30s if onload doesn't fire (Google Docs quirk)
     setTimeout(() => loading.classList.add('hidden'), 30000);
+  }, 100);
+
+  // Open fullscreen immediately
+  openPdfFullscreen(idx);
+}
+
+/* ═══ FULLSCREEN PDF VIEWER ═══ */
+let pdfFsMenuOpen = false;
+
+function openPdfFullscreen(idx) {
+  const note = MLA_NOTES[idx];
+  const rawUrl = MLA_NOTES_BASE + encodeURIComponent(note.file);
+  const viewerUrl = 'https://docs.google.com/viewer?embedded=true&url=' + encodeURIComponent(rawUrl);
+
+  // Update fullscreen bar
+  document.getElementById('pdf-fs-title').textContent = note.title;
+  document.getElementById('pdf-fs-open-link').href = rawUrl;
+
+  // Reset and load iframe
+  const spinner = document.getElementById('pdf-fs-spinner');
+  const fsIframe = document.getElementById('pdf-fs-iframe');
+  spinner.classList.remove('hidden');
+  fsIframe.src = '';
+  setTimeout(() => {
+    fsIframe.onload = () => spinner.classList.add('hidden');
+    fsIframe.src = viewerUrl;
+    setTimeout(() => spinner.classList.add('hidden'), 30000);
+  }, 100);
+
+  // Show overlay
+  document.getElementById('pdf-fullscreen').classList.add('open');
+
+  // Build sections list
+  renderFsSections();
+  // Show floating toggle only if there are multiple sections
+  const toggle = document.getElementById('pdf-section-toggle');
+  toggle.classList.toggle('visible', MLA_NOTES.length > 1);
+
+  // Prevent body scroll
+  document.body.style.overflow = 'hidden';
+}
+
+function closePdfFullscreen() {
+  document.getElementById('pdf-fullscreen').classList.remove('open');
+  document.getElementById('pdf-section-toggle').classList.remove('visible');
+  closeSectionsMenu();
+  document.body.style.overflow = '';
+}
+
+function toggleSectionsMenu() {
+  pdfFsMenuOpen ? closeSectionsMenu() : openSectionsMenu();
+}
+
+function openSectionsMenu() {
+  pdfFsMenuOpen = true;
+  document.getElementById('pdf-sections-menu').classList.add('open');
+  document.getElementById('pdf-pill-arrow').textContent = '▼';
+}
+
+function closeSectionsMenu() {
+  pdfFsMenuOpen = false;
+  document.getElementById('pdf-sections-menu').classList.remove('open');
+  document.getElementById('pdf-pill-arrow').textContent = '▲';
+}
+
+function renderFsSections() {
+  const list = document.getElementById('pdf-sections-list');
+  if (!MLA_NOTES.length) { list.innerHTML = ''; return; }
+  list.innerHTML = MLA_NOTES.map((n, i) => `
+    <button class="pdf-section-item${activeNoteIdx === i ? ' active-sec' : ''}" onclick="switchFsSection(${i})">
+      <span class="pdf-sec-icon">📄</span>
+      <div class="pdf-sec-info">
+        <div class="pdf-sec-title">${n.title}</div>
+        <div class="pdf-sec-sub">${n.sub}</div>
+      </div>
+      <span class="pdf-sec-tick">✓</span>
+    </button>`).join('');
+  // Update pill label
+  const cur = MLA_NOTES[activeNoteIdx];
+  const shortTitle = cur ? cur.sub || cur.title : 'Sections';
+  document.getElementById('pdf-pill-label').textContent = shortTitle;
+}
+
+function switchFsSection(idx) {
+  if (idx === activeNoteIdx) { closeSectionsMenu(); return; }
+  activeNoteIdx = idx;
+  renderNotesList();   // keep inline sidebar in sync
+  renderFsSections();
+  closeSectionsMenu();
+
+  const note = MLA_NOTES[idx];
+  const rawUrl = MLA_NOTES_BASE + encodeURIComponent(note.file);
+  const viewerUrl = 'https://docs.google.com/viewer?embedded=true&url=' + encodeURIComponent(rawUrl);
+
+  // Update fullscreen bar
+  document.getElementById('pdf-fs-title').textContent = note.title;
+  document.getElementById('pdf-fs-open-link').href = rawUrl;
+
+  // Reload iframe
+  const spinner = document.getElementById('pdf-fs-spinner');
+  const fsIframe = document.getElementById('pdf-fs-iframe');
+  spinner.classList.remove('hidden');
+  fsIframe.src = '';
+  setTimeout(() => {
+    fsIframe.onload = () => spinner.classList.add('hidden');
+    fsIframe.src = viewerUrl;
+    setTimeout(() => spinner.classList.add('hidden'), 30000);
   }, 100);
 }
 
+// Close sections menu when clicking outside
+document.addEventListener('click', function(e) {
+  if (!pdfFsMenuOpen) return;
+  const toggle = document.getElementById('pdf-section-toggle');
+  if (toggle && !toggle.contains(e.target)) closeSectionsMenu();
+});
+
 /* ═══ KEYBOARD SHORTCUTS ═══ */
 document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    if(document.getElementById('pdf-fullscreen').classList.contains('open')){closePdfFullscreen();return;}
+  }
   if(currentMode==='notes'){
     if(e.key==='Escape') closeNotesDrawer();
     return;
