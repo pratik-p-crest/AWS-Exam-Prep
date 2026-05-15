@@ -89,7 +89,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 /* ═══════════════════════════════════════
    HOME
 ═══════════════════════════════════════ */
-#view-home{overflow-y:auto;-webkit-overflow-scrolling:touch}
+#view-home{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 #view-home::-webkit-scrollbar{width:8px}
 #view-home::-webkit-scrollbar-track{background:var(--surface2);border-radius:4px}
 [data-theme="dark"] #view-home::-webkit-scrollbar-thumb{background:#2a3f5e;border-radius:4px;border:1px solid var(--border)}
@@ -106,8 +106,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .home-logo .hl{color:var(--aif-accent)}
 [data-theme="dark"] .home-logo .hl{text-shadow:0 0 20px rgba(245,158,11,0.4)}
 
-.home-hero{text-align:center;padding:4rem 20px 2.5rem;max-width:680px;margin:0 auto}
-.home-hero h1{font-family:var(--display);font-size:clamp(2rem,5vw,3.2rem);font-weight:800;letter-spacing:-1.5px;line-height:1.08;margin-bottom:1.1rem}
+.home-hero{text-align:center;padding:2.5rem 20px 1.5rem;max-width:680px;margin:0 auto}
+.home-hero h1{font-family:var(--display);font-size:clamp(1.8rem,5vw,3.2rem);font-weight:800;letter-spacing:-1.5px;line-height:1.08;margin-bottom:1rem}
 .home-hero h1 em{font-style:normal;color:var(--aif-accent)}
 [data-theme="dark"] .home-hero h1 em{text-shadow:0 0 30px rgba(245,158,11,0.35)}
 .home-hero p{color:var(--text-secondary);font-size:15px;line-height:1.75;max-width:420px;margin:0 auto;font-weight:400}
@@ -122,7 +122,14 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .exam-grid .exam-card:nth-child(3){animation-delay:.19s}
 .quiz-session.active .q-card{animation:fadeUp .3s ease both}
 
-.exam-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;padding:2rem 24px 5rem;max-width:980px;margin:0 auto}
+.exam-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;padding:1.5rem 16px 5rem;max-width:980px;margin:0 auto}
+
+/* Mobile: single column, no overflow */
+@media(max-width:640px){
+  .home-hero{padding:1.8rem 16px 1.2rem}
+  .exam-grid{grid-template-columns:1fr;padding:1rem 16px 5rem;gap:14px}
+  .exam-card{padding:1.4rem}
+}
 .exam-card{
   background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:2rem;
   cursor:pointer;text-align:left;position:relative;overflow:hidden;
@@ -1064,11 +1071,14 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 }
 .notes-empty-cta:hover{background:rgba(167,139,250,.2)}
 
-.notes-frame-wrap{flex:1;position:relative;overflow:hidden}
+.notes-frame-wrap{flex:1;position:relative;overflow:hidden;touch-action:pan-y;-webkit-overflow-scrolling:touch}
 .notes-frame-wrap iframe{
   position:absolute;inset:0;width:100%;height:100%;
   border:none;display:block;background:#fff;
+  touch-action:pan-y pan-x;pointer-events:auto;
 }
+.pdf-fs-body{touch-action:pan-y pan-x;-webkit-overflow-scrolling:touch}
+.pdf-fs-body iframe{touch-action:pan-y pan-x;pointer-events:auto}
 .notes-loading{
   position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:14px;background:var(--bg);z-index:10;transition:opacity .35s;
@@ -1097,13 +1107,24 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 }
 .pdf-fullscreen.open{display:flex}
 
+/* ── Top bar ── */
 .pdf-fs-bar{
-  height:44px;flex-shrink:0;
+  height:50px;flex-shrink:0;
   background:var(--nav-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   border-bottom:1px solid var(--border);
-  display:flex;align-items:center;padding:0 12px;gap:8px;
+  display:flex;align-items:center;padding:0 12px;gap:10px;
 }
 [data-theme="light"] .pdf-fs-bar{box-shadow:0 1px 0 var(--border)}
+
+.pdf-fs-close{
+  height:32px;padding:0 14px;border-radius:9px;
+  border:1px solid var(--border);background:var(--surface2);
+  color:var(--text-secondary);font-family:var(--mono);font-size:10px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.5px;cursor:pointer;transition:all .18s;
+  display:flex;align-items:center;gap:6px;flex-shrink:0;
+}
+.pdf-fs-close:hover{color:var(--text);border-color:var(--border-bright);background:var(--surface3)}
+
 .pdf-fs-title{
   font-family:var(--display);font-size:13px;font-weight:700;color:var(--text);
   flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
@@ -1113,24 +1134,36 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   background:rgba(167,139,250,.12);color:var(--mla-accent);border:1px solid rgba(167,139,250,.3);
   letter-spacing:.8px;text-transform:uppercase;white-space:nowrap;flex-shrink:0;
 }
-.pdf-fs-close{
-  height:28px;padding:0 12px;border-radius:8px;
-  border:1px solid var(--border);background:var(--surface2);
-  color:var(--text-secondary);font-family:var(--mono);font-size:10px;font-weight:700;
-  text-transform:uppercase;letter-spacing:.5px;cursor:pointer;transition:all .18s;
-  display:flex;align-items:center;gap:5px;flex-shrink:0;
-}
-.pdf-fs-close:hover{color:var(--text);border-color:var(--border-bright);background:var(--surface3)}
 .pdf-fs-open{
-  font-family:var(--mono);font-size:9px;font-weight:700;padding:5px 12px;border-radius:8px;
+  font-family:var(--mono);font-size:9px;font-weight:700;padding:6px 13px;border-radius:8px;
   border:1px solid rgba(167,139,250,.4);background:rgba(167,139,250,.1);color:var(--mla-accent);
   cursor:pointer;transition:all .18s;text-decoration:none;display:flex;align-items:center;gap:5px;
   text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;flex-shrink:0;
 }
 .pdf-fs-open:hover{background:rgba(167,139,250,.22);border-color:rgba(167,139,250,.7)}
 
+/* ── PDF body ── */
 .pdf-fs-body{flex:1;position:relative;overflow:hidden;background:var(--bg)}
-.pdf-fs-body iframe{position:absolute;inset:0;width:100%;height:100%;border:none;background:#fff}
+.pdf-fs-body iframe{
+  position:absolute;inset:0;width:100%;height:100%;border:none;background:#fff;
+  touch-action:pan-x pan-y;
+}
+
+/* Scroll nudge overlay — thin tap zone on right edge on mobile to hint scrollability */
+.pdf-scroll-hint{
+  display:none;
+  position:absolute;top:50%;right:0;transform:translateY(-50%);
+  width:28px;height:80px;z-index:4;
+  background:rgba(167,139,250,.18);border-radius:8px 0 0 8px;
+  border:1px solid rgba(167,139,250,.35);border-right:none;
+  align-items:center;justify-content:center;
+  font-size:13px;color:var(--mla-accent);
+  animation:hint-pulse 2.5s ease infinite;
+  pointer-events:none;
+}
+@keyframes hint-pulse{0%,100%{opacity:.6}50%{opacity:1}}
+@media(max-width:600px){.pdf-scroll-hint{display:flex}}
+
 .pdf-fs-spinner{
   position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:14px;background:var(--bg);z-index:5;transition:opacity .4s;
@@ -1143,37 +1176,195 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 }
 .pdf-fs-spin-txt{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.5px}
 
-/* Floating section toggle */
-.pdf-section-toggle{
-  position:fixed;bottom:24px;right:20px;z-index:10000;
-  display:none;flex-direction:column;align-items:flex-end;gap:8px;
+/* ── Mobile scroll tip banner (shows once, auto-hides) ── */
+.pdf-scroll-tip{
+  display:none;position:absolute;bottom:68px;left:50%;transform:translateX(-50%);
+  z-index:20;
+  background:rgba(0,0,0,.82);backdrop-filter:blur(12px);
+  color:#fff;font-family:var(--mono);font-size:11px;font-weight:600;
+  padding:9px 18px;border-radius:20px;white-space:nowrap;
+  pointer-events:none;
+  animation:tip-in .3s ease both, tip-out .4s ease 3.5s both;
 }
-.pdf-section-toggle.visible{display:flex}
+@keyframes tip-in{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes tip-out{from{opacity:1}to{opacity:0;pointer-events:none}}
+@media(max-width:600px){.pdf-scroll-tip{display:block}}
 
-.pdf-toggle-pill{
+/* ════════════════════════════════════════
+   BOTTOM SECTION SWITCHER — replaces floating pill
+   Integrated into the fullscreen view as a fixed footer bar
+════════════════════════════════════════ */
+
+/* Backdrop */
+.pdf-sections-backdrop{
+  display:none;position:fixed;inset:0;z-index:10000;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
+}
+.pdf-sections-backdrop.open{display:block}
+
+/* The sheet itself — slides up from bottom */
+.pdf-sections-sheet{
+  position:fixed;bottom:0;left:0;right:0;z-index:10001;
+  background:var(--surface);border-radius:20px 20px 0 0;
+  border:1px solid var(--border);border-bottom:none;
+  box-shadow:0 -8px 40px rgba(0,0,0,.4);
+  transform:translateY(100%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+  max-height:70vh;display:flex;flex-direction:column;
+}
+.pdf-sections-sheet.open{transform:translateY(0)}
+
+/* Drag handle */
+.pdf-sheet-handle{
+  width:36px;height:4px;border-radius:2px;
+  background:var(--border-bright);
+  margin:12px auto 0;flex-shrink:0;
+}
+
+.pdf-sheet-title{
+  font-family:var(--mono);font-size:10px;font-weight:700;
+  text-transform:uppercase;letter-spacing:1.6px;color:var(--muted);
+  padding:10px 18px 8px;border-bottom:1px solid var(--border);flex-shrink:0;
   display:flex;align-items:center;gap:8px;
-  background:var(--mla-accent);color:#fff;
-  font-family:var(--mono);font-size:11px;font-weight:700;
-  text-transform:uppercase;letter-spacing:.6px;
-  padding:10px 16px;border-radius:28px;border:none;
-  cursor:pointer;
-  box-shadow:0 4px 20px rgba(167,139,250,.45),0 1px 4px rgba(0,0,0,.25);
-  transition:transform .18s,box-shadow .18s;white-space:nowrap;
 }
-.pdf-toggle-pill:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(167,139,250,.55)}
-.pdf-toggle-pill:active{transform:scale(.96)}
-[data-theme="light"] .pdf-toggle-pill{box-shadow:0 4px 16px rgba(109,40,217,.35)}
 
-.pdf-sections-menu{
-  background:var(--surface);border:1px solid var(--border);border-radius:14px;
-  overflow:hidden;
-  box-shadow:0 8px 32px rgba(0,0,0,.35),0 2px 8px rgba(0,0,0,.2);
-  min-width:220px;max-width:80vw;
-  transform:translateY(10px) scale(.96);opacity:0;pointer-events:none;
-  transition:opacity .2s,transform .2s;
+.pdf-sheet-list{
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:6px 10px 24px;display:flex;flex-direction:column;gap:6px;
 }
-[data-theme="light"] .pdf-sections-menu{box-shadow:0 4px 24px rgba(15,23,42,.15)}
-.pdf-sections-menu.open{opacity:1;pointer-events:all;transform:translateY(0) scale(1)}
+
+.pdf-sheet-item{
+  display:flex;align-items:center;gap:12px;
+  padding:13px 14px;border-radius:12px;
+  border:1px solid var(--border);background:var(--surface2);
+  cursor:pointer;transition:all .15s;text-align:left;width:100%;color:var(--text);
+}
+.pdf-sheet-item:hover,.pdf-sheet-item:active{background:var(--surface3);border-color:var(--border-bright)}
+.pdf-sheet-item.active-sec{
+  border-color:rgba(167,139,250,.55);background:rgba(167,139,250,.1);
+}
+[data-theme="dark"] .pdf-sheet-item.active-sec{box-shadow:0 0 0 1px rgba(167,139,250,.2)}
+
+.pdf-sheet-num{
+  width:32px;height:32px;border-radius:8px;flex-shrink:0;
+  background:var(--surface3);border:1px solid var(--border);
+  font-family:var(--mono);font-size:11px;font-weight:700;color:var(--muted);
+  display:flex;align-items:center;justify-content:center;
+}
+.pdf-sheet-item.active-sec .pdf-sheet-num{
+  background:var(--mla-accent);color:#fff;border-color:transparent;
+}
+.pdf-sheet-info{flex:1;min-width:0}
+.pdf-sheet-item-title{
+  font-family:var(--sans);font-size:13px;font-weight:600;color:var(--text);
+  line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.pdf-sheet-item.active-sec .pdf-sheet-item-title{color:var(--mla-accent)}
+.pdf-sheet-item-sub{
+  font-family:var(--mono);font-size:9px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.7px;margin-top:3px;
+}
+.pdf-sheet-tick{
+  font-size:14px;color:var(--mla-accent);flex-shrink:0;
+  opacity:0;transition:opacity .15s;
+}
+.pdf-sheet-item.active-sec .pdf-sheet-tick{opacity:1}
+
+/* ── Section switcher trigger bar (bottom of fullscreen) ── */
+.pdf-fs-switcher-bar{
+  height:54px;flex-shrink:0;
+  background:var(--nav-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:none; /* shown only when there are multiple sections */
+  align-items:center;padding:0 16px;gap:10px;cursor:pointer;
+  transition:background .18s;
+  -webkit-tap-highlight-color:transparent;
+}
+.pdf-fs-switcher-bar:active{background:var(--surface2)}
+.pdf-fs-switcher-bar.visible{display:flex}
+[data-theme="light"] .pdf-fs-switcher-bar{box-shadow:0 -1px 0 var(--border)}
+
+.pdf-switcher-icon{font-size:16px;flex-shrink:0}
+.pdf-switcher-label{flex:1;min-width:0}
+.pdf-switcher-current{
+  font-family:var(--sans);font-size:13px;font-weight:600;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.pdf-switcher-hint{
+  font-family:var(--mono);font-size:9px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.8px;margin-top:1px;
+}
+.pdf-switcher-chevron{
+  font-size:18px;color:var(--muted);flex-shrink:0;
+  transition:transform .2s;
+}
+
+/* Desktop: keep old floating pill style, hide the bar */
+@media(min-width:601px){
+  .pdf-fs-switcher-bar{display:none!important}
+
+  /* Desktop floating pill (old behavior) */
+  .pdf-section-toggle{
+    position:fixed;bottom:24px;right:20px;z-index:10002;
+    display:none;flex-direction:column;align-items:flex-end;gap:8px;
+  }
+  .pdf-section-toggle.visible{display:flex}
+  .pdf-toggle-pill{
+    display:flex;align-items:center;gap:8px;
+    background:var(--mla-accent);color:#fff;
+    font-family:var(--mono);font-size:11px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.6px;
+    padding:10px 16px;border-radius:28px;border:none;cursor:pointer;
+    box-shadow:0 4px 20px rgba(167,139,250,.45),0 1px 4px rgba(0,0,0,.25);
+    transition:transform .18s,box-shadow .18s;white-space:nowrap;
+  }
+  .pdf-toggle-pill:hover{transform:translateY(-2px)}
+  .pdf-toggle-pill:active{transform:scale(.96)}
+  [data-theme="light"] .pdf-toggle-pill{box-shadow:0 4px 16px rgba(109,40,217,.35)}
+
+  /* Desktop popover menu */
+  .pdf-sections-menu{
+    background:var(--surface);border:1px solid var(--border);border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 8px 32px rgba(0,0,0,.35),0 2px 8px rgba(0,0,0,.2);
+    min-width:240px;max-width:80vw;
+    transform:translateY(10px) scale(.96);opacity:0;pointer-events:none;
+    transition:opacity .2s,transform .2s;
+    max-height:60vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  }
+  [data-theme="light"] .pdf-sections-menu{box-shadow:0 4px 24px rgba(15,23,42,.15)}
+  .pdf-sections-menu.open{opacity:1;pointer-events:all;transform:translateY(0) scale(1)}
+  .pdf-sections-header{
+    padding:10px 14px 8px;border-bottom:1px solid var(--border);
+    font-family:var(--mono);font-size:9px;color:var(--muted);
+    text-transform:uppercase;letter-spacing:1.4px;font-weight:700;
+  }
+  .pdf-section-item{
+    display:flex;align-items:center;gap:10px;
+    padding:11px 14px;cursor:pointer;
+    border:none;background:transparent;width:100%;text-align:left;
+    transition:background .12s;border-bottom:1px solid var(--border);color:var(--text);
+  }
+  .pdf-section-item:last-child{border-bottom:none}
+  .pdf-section-item:hover{background:var(--surface2)}
+  .pdf-section-item.active-sec{background:rgba(167,139,250,.1)}
+  .pdf-sec-icon{font-size:15px;flex-shrink:0}
+  .pdf-sec-info{flex:1;min-width:0}
+  .pdf-sec-title{
+    font-family:var(--sans);font-size:12px;font-weight:600;color:var(--text);
+    line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .pdf-section-item.active-sec .pdf-sec-title{color:var(--mla-accent)}
+  .pdf-sec-sub{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-top:2px}
+  .pdf-sec-tick{font-size:12px;color:var(--mla-accent);flex-shrink:0;opacity:0;transition:opacity .15s}
+  .pdf-section-item.active-sec .pdf-sec-tick{opacity:1}
+}
+
+/* Mobile: hide the old desktop pill */
+@media(max-width:600px){
+  .pdf-section-toggle{display:none!important}
+}
 
 .pdf-sections-header{
   padding:10px 14px 8px;border-bottom:1px solid var(--border);
@@ -1413,11 +1604,34 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <div class="pdf-fs-spin-ring"></div>
       <div class="pdf-fs-spin-txt">Loading PDF…</div>
     </div>
+    <!-- Scroll tip (mobile only, auto-hides after 4s) -->
+    <div class="pdf-scroll-tip" id="pdf-scroll-tip">👆 Scroll inside the PDF to read</div>
+    <!-- Subtle right-edge scroll indicator -->
+    <div class="pdf-scroll-hint">↕</div>
     <iframe id="pdf-fs-iframe" title="Study Notes Fullscreen" allowfullscreen></iframe>
+  </div>
+  <!-- Mobile section switcher bar (bottom of fullscreen) -->
+  <div class="pdf-fs-switcher-bar" id="pdf-fs-switcher-bar" onclick="openSectionsSheet()">
+    <span class="pdf-switcher-icon">📑</span>
+    <div class="pdf-switcher-label">
+      <div class="pdf-switcher-current" id="pdf-switcher-current">Sections</div>
+      <div class="pdf-switcher-hint">Tap to switch section</div>
+    </div>
+    <span class="pdf-switcher-chevron">⌃</span>
   </div>
 </div>
 
-<!-- Floating section switcher -->
+<!-- Bottom sheet backdrop -->
+<div class="pdf-sections-backdrop" id="pdf-sections-backdrop" onclick="closeSectionsSheet()"></div>
+
+<!-- Bottom sheet (mobile section picker) -->
+<div class="pdf-sections-sheet" id="pdf-sections-sheet">
+  <div class="pdf-sheet-handle"></div>
+  <div class="pdf-sheet-title">📚 Switch Section</div>
+  <div class="pdf-sheet-list" id="pdf-sheet-list"></div>
+</div>
+
+<!-- Desktop floating section switcher (unchanged) -->
 <div class="pdf-section-toggle" id="pdf-section-toggle">
   <div class="pdf-sections-menu" id="pdf-sections-menu">
     <div class="pdf-sections-header">📚 Switch Section</div>
@@ -2206,6 +2420,11 @@ const MLA_NOTES = [
   sub:   'MLA-C01 - Section 12',
   file:  'AWS_ML_Section12_ML_Best_Practices.pdf'
 },
+{
+    title: 'AWS ML Engineer Cheat Sheet',
+    sub:   'MLA-C01 · Cheat Sheet',
+    file:  'AWS_ML_Engineer_Cheat_Sheet.pdf'
+},
   // ── Add more notes below this line ──
 ];
 
@@ -2307,6 +2526,7 @@ function loadNote(idx) {
 
 /* ═══ FULLSCREEN PDF VIEWER ═══ */
 let pdfFsMenuOpen = false;
+let pdfScrollTipShown = false;
 
 function openPdfFullscreen(idx) {
   if (idx === null || idx === undefined || !MLA_NOTES[idx]) return;
@@ -2315,17 +2535,32 @@ function openPdfFullscreen(idx) {
   renderNotesList();
   loadFsIframe(idx);
   document.getElementById('pdf-fullscreen').classList.add('open');
+  const hasMultiple = MLA_NOTES.length > 1;
+  // Desktop: show floating pill
+  document.getElementById('pdf-section-toggle').classList.toggle('visible', hasMultiple);
+  // Mobile: show switcher bar
+  const bar = document.getElementById('pdf-fs-switcher-bar');
+  if (bar) bar.classList.toggle('visible', hasMultiple);
   renderFsSections();
-  document.getElementById('pdf-section-toggle').classList.toggle('visible', MLA_NOTES.length > 1);
+  renderSheetSections();
+  syncSwitcherBar();
   document.body.style.overflow = 'hidden';
+  // Show scroll tip once on mobile
+  if (!pdfScrollTipShown && window.innerWidth <= 600) {
+    pdfScrollTipShown = true;
+    const tip = document.getElementById('pdf-scroll-tip');
+    if (tip) { tip.style.display = 'block'; setTimeout(() => { tip.style.display = 'none'; }, 4200); }
+  }
 }
 
 function closePdfFullscreen() {
   document.getElementById('pdf-fullscreen').classList.remove('open');
   document.getElementById('pdf-section-toggle').classList.remove('visible');
+  const bar = document.getElementById('pdf-fs-switcher-bar');
+  if (bar) bar.classList.remove('visible');
   closeSectionsMenu();
+  closeSectionsSheet();
   document.body.style.overflow = '';
-  // Sync inline iframe to match whatever is active now
   if (activeNoteIdx !== null) {
     syncInlineToolbar(activeNoteIdx);
     renderNotesList();
@@ -2333,22 +2568,38 @@ function closePdfFullscreen() {
   }
 }
 
-/* ═══ SECTION SWITCHER ═══ */
+/* ═══ DESKTOP SECTION MENU (popover) ═══ */
 function toggleSectionsMenu() { pdfFsMenuOpen ? closeSectionsMenu() : openSectionsMenu(); }
 function openSectionsMenu() {
   pdfFsMenuOpen = true;
   document.getElementById('pdf-sections-menu').classList.add('open');
+  document.getElementById('pdf-sections-backdrop').classList.add('open');
   document.getElementById('pdf-pill-arrow').textContent = '▼';
 }
 function closeSectionsMenu() {
   pdfFsMenuOpen = false;
-  document.getElementById('pdf-sections-menu').classList.remove('open');
-  document.getElementById('pdf-pill-arrow').textContent = '▲';
+  const m = document.getElementById('pdf-sections-menu');
+  const b = document.getElementById('pdf-sections-backdrop');
+  const a = document.getElementById('pdf-pill-arrow');
+  if (m) m.classList.remove('open');
+  if (b) b.classList.remove('open');
+  if (a) a.textContent = '▲';
+}
+
+/* ═══ MOBILE SECTION SHEET (bottom sheet) ═══ */
+function openSectionsSheet() {
+  renderSheetSections();
+  document.getElementById('pdf-sections-sheet').classList.add('open');
+  document.getElementById('pdf-sections-backdrop').classList.add('open');
+}
+function closeSectionsSheet() {
+  document.getElementById('pdf-sections-sheet').classList.remove('open');
+  document.getElementById('pdf-sections-backdrop').classList.remove('open');
 }
 
 function renderFsSections() {
   const list = document.getElementById('pdf-sections-list');
-  if (!MLA_NOTES.length) { list.innerHTML = ''; return; }
+  if (!list || !MLA_NOTES.length) return;
   list.innerHTML = MLA_NOTES.map((n, i) => `
     <button class="pdf-section-item${activeNoteIdx === i ? ' active-sec' : ''}" onclick="switchFsSection(${i})">
       <span class="pdf-sec-icon">📄</span>
@@ -2359,7 +2610,28 @@ function renderFsSections() {
       <span class="pdf-sec-tick">✓</span>
     </button>`).join('');
   const cur = MLA_NOTES[activeNoteIdx];
-  document.getElementById('pdf-pill-label').textContent = cur ? cur.sub || cur.title : 'Sections';
+  const lbl = document.getElementById('pdf-pill-label');
+  if (lbl) lbl.textContent = cur ? cur.sub || cur.title : 'Sections';
+}
+
+function renderSheetSections() {
+  const list = document.getElementById('pdf-sheet-list');
+  if (!list || !MLA_NOTES.length) return;
+  list.innerHTML = MLA_NOTES.map((n, i) => `
+    <button class="pdf-sheet-item${activeNoteIdx === i ? ' active-sec' : ''}" onclick="switchSheetSection(${i})">
+      <div class="pdf-sheet-num">${i + 1}</div>
+      <div class="pdf-sheet-info">
+        <div class="pdf-sheet-item-title">${n.title}</div>
+        <div class="pdf-sheet-item-sub">${n.sub}</div>
+      </div>
+      <span class="pdf-sheet-tick">✓</span>
+    </button>`).join('');
+}
+
+function syncSwitcherBar() {
+  const cur = MLA_NOTES[activeNoteIdx];
+  const el = document.getElementById('pdf-switcher-current');
+  if (el && cur) el.textContent = cur.title;
 }
 
 function switchFsSection(idx) {
@@ -2370,11 +2642,26 @@ function switchFsSection(idx) {
   loadFsIframe(idx);
 }
 
-// Close sections menu when clicking outside
+function switchSheetSection(idx) {
+  if (idx === activeNoteIdx) { closeSectionsSheet(); return; }
+  activeNoteIdx = idx;
+  renderSheetSections();
+  syncSwitcherBar();
+  closeSectionsSheet();
+  loadFsIframe(idx);
+}
+
+// Close desktop menu when clicking outside
 document.addEventListener('click', function(e) {
   if (!pdfFsMenuOpen) return;
   const toggle = document.getElementById('pdf-section-toggle');
   if (toggle && !toggle.contains(e.target)) closeSectionsMenu();
+});
+
+// Backdrop click closes whichever is open
+document.getElementById('pdf-sections-backdrop').addEventListener('click', function() {
+  closeSectionsMenu();
+  closeSectionsSheet();
 });
 
 // Wire up fullscreen button safely after DOM ready
