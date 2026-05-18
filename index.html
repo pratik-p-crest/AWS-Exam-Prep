@@ -80,6 +80,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .theme-toggle input{opacity:0;width:0;height:0;position:absolute}
 .toggle-track{position:absolute;inset:0;border-radius:13px;background:var(--surface2);border:1px solid var(--border);transition:all .3s;overflow:hidden}
 .toggle-track::after{content:'';position:absolute;width:20px;height:20px;border-radius:50%;background:var(--text);top:2px;left:2px;transition:transform .3s cubic-bezier(.4,0,.2,1);box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.theme-toggle input:checked~.toggle-track::after{transform:translateX(24px)}
 .toggle-icons{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:center;padding:0 5px;pointer-events:none;font-size:10px;z-index:1}
 
 /* ═══ VIEWS ═══ */
@@ -975,6 +976,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   background:rgba(167,139,250,.12);color:var(--mla-accent);border:1px solid rgba(167,139,250,.3);
   letter-spacing:.8px;text-transform:uppercase;white-space:nowrap;flex-shrink:0;
 }
+.exam-dea .notes-viewer-badge{background:rgba(96,165,250,.12);color:var(--dea-accent);border-color:rgba(96,165,250,.3)}
 .notes-open-btn{
   font-family:var(--mono);font-size:9px;font-weight:700;padding:5px 12px;border-radius:8px;
   border:1px solid rgba(167,139,250,.4);background:rgba(167,139,250,.1);color:var(--mla-accent);
@@ -983,6 +985,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 }
 .notes-open-btn.visible{display:flex}
 .notes-open-btn:hover{background:rgba(167,139,250,.2);border-color:rgba(167,139,250,.7)}
+.exam-dea .notes-open-btn{border-color:rgba(96,165,250,.4);background:rgba(96,165,250,.1);color:var(--dea-accent)}
+.exam-dea .notes-open-btn:hover{background:rgba(96,165,250,.2);border-color:rgba(96,165,250,.7)}
 .notes-fs-btn{
   font-family:var(--mono);font-size:9px;font-weight:700;padding:5px 11px;border-radius:8px;
   border:1px solid var(--border);background:var(--surface2);color:var(--text-secondary);
@@ -991,6 +995,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 }
 .notes-fs-btn.visible{display:flex}
 .notes-fs-btn:hover{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.5);color:var(--mla-accent)}
+.exam-dea .notes-fs-btn:hover{background:rgba(96,165,250,.12);border-color:rgba(96,165,250,.5);color:var(--dea-accent)}
 
 /* ── Body (sidebar + viewer) ── */
 .notes-body{display:flex;flex:1;overflow:hidden;min-height:0;position:relative}
@@ -1037,10 +1042,13 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .notes-item:hover{border-color:var(--border-bright);background:var(--surface3)}
 .notes-item.active-note{border-color:rgba(167,139,250,.55);background:rgba(167,139,250,.1)}
 [data-theme="dark"] .notes-item.active-note{box-shadow:0 0 0 1px rgba(167,139,250,.2)}
+.exam-dea .notes-item.active-note{border-color:rgba(96,165,250,.55);background:rgba(96,165,250,.1)}
+[data-theme="dark"] .exam-dea .notes-item.active-note{box-shadow:0 0 0 1px rgba(96,165,250,.2)}
 .notes-item-icon{font-size:17px;flex-shrink:0;line-height:1;padding-top:1px}
 .notes-item-info{flex:1;min-width:0}
 .notes-item-title{font-family:var(--sans);font-size:12px;font-weight:600;color:var(--text);line-height:1.45;margin-bottom:3px}
 .notes-item.active-note .notes-item-title{color:var(--mla-accent)}
+.exam-dea .notes-item.active-note .notes-item-title{color:var(--dea-accent)}
 .notes-item-sub{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
 
 /* drawer scrim */
@@ -1070,6 +1078,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   cursor:pointer;transition:all .18s;
 }
 .notes-empty-cta:hover{background:rgba(167,139,250,.2)}
+.exam-dea .notes-empty-cta{border-color:rgba(96,165,250,.45);background:rgba(96,165,250,.1);color:var(--dea-accent)}
+.exam-dea .notes-empty-cta:hover{background:rgba(96,165,250,.2)}
 
 .notes-frame-wrap{flex:1;position:relative;overflow:hidden;touch-action:pan-y;-webkit-overflow-scrolling:touch}
 .notes-frame-wrap iframe{
@@ -1089,6 +1099,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   border-top-color:var(--mla-accent);border-radius:50%;
   animation:notes-spin .7s linear infinite;
 }
+.exam-dea .notes-spinner{border-top-color:var(--dea-accent)}
 @keyframes notes-spin{to{transform:rotate(360deg)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 .notes-loading-txt{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.5px}
@@ -1134,6 +1145,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   background:rgba(167,139,250,.12);color:var(--mla-accent);border:1px solid rgba(167,139,250,.3);
   letter-spacing:.8px;text-transform:uppercase;white-space:nowrap;flex-shrink:0;
 }
+.exam-dea .pdf-fs-badge{background:rgba(96,165,250,.12);color:var(--dea-accent);border-color:rgba(96,165,250,.3)}
 .pdf-fs-open{
   font-family:var(--mono);font-size:9px;font-weight:700;padding:6px 13px;border-radius:8px;
   border:1px solid rgba(167,139,250,.4);background:rgba(167,139,250,.1);color:var(--mla-accent);
@@ -1141,6 +1153,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;flex-shrink:0;
 }
 .pdf-fs-open:hover{background:rgba(167,139,250,.22);border-color:rgba(167,139,250,.7)}
+.exam-dea .pdf-fs-open{border-color:rgba(96,165,250,.4);background:rgba(96,165,250,.1);color:var(--dea-accent)}
+.exam-dea .pdf-fs-open:hover{background:rgba(96,165,250,.22);border-color:rgba(96,165,250,.7)}
 
 /* ── PDF body ── */
 .pdf-fs-body{flex:1;position:relative;overflow:hidden;background:var(--bg)}
@@ -1174,6 +1188,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   border-top-color:var(--mla-accent);border-radius:50%;
   animation:notes-spin .7s linear infinite;
 }
+.exam-dea .pdf-fs-spin-ring{border-top-color:var(--dea-accent)}
 .pdf-fs-spin-txt{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.5px}
 
 /* ── Mobile scroll tip banner (shows once, auto-hides) ── */
@@ -1255,12 +1270,14 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .pdf-sheet-item.active-sec .pdf-sheet-num{
   background:var(--mla-accent);color:#fff;border-color:transparent;
 }
+.exam-dea .pdf-sheet-item.active-sec .pdf-sheet-num{background:var(--dea-accent)}
 .pdf-sheet-info{flex:1;min-width:0}
 .pdf-sheet-item-title{
   font-family:var(--sans);font-size:13px;font-weight:600;color:var(--text);
   line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .pdf-sheet-item.active-sec .pdf-sheet-item-title{color:var(--mla-accent)}
+.exam-dea .pdf-sheet-item.active-sec .pdf-sheet-item-title{color:var(--dea-accent)}
 .pdf-sheet-item-sub{
   font-family:var(--mono);font-size:9px;color:var(--muted);
   text-transform:uppercase;letter-spacing:.7px;margin-top:3px;
@@ -1269,6 +1286,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   font-size:14px;color:var(--mla-accent);flex-shrink:0;
   opacity:0;transition:opacity .15s;
 }
+.exam-dea .pdf-sheet-tick{color:var(--dea-accent)}
 .pdf-sheet-item.active-sec .pdf-sheet-tick{opacity:1}
 
 /* ── Section switcher trigger bar (bottom of fullscreen) ── */
@@ -1542,7 +1560,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <div class="notes-toolbar">
         <button class="notes-menu-btn" id="notes-menu-btn" onclick="toggleNotesDrawer()" title="Browse notes">☰</button>
         <div class="notes-toolbar-title placeholder" id="notes-toolbar-title">Select a note from the menu →</div>
-        <span class="notes-viewer-badge">MLA-C01</span>
+        <span class="notes-viewer-badge" id="notes-viewer-badge">MLA-C01</span>
         <button class="notes-fs-btn" id="notes-fs-btn" title="Fullscreen">⛶ Fullscreen</button>
         <a class="notes-open-btn" id="notes-open-btn" href="#" target="_blank" rel="noopener">↗ Open PDF</a>
       </div>
@@ -1596,7 +1614,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div class="pdf-fs-bar">
     <button class="pdf-fs-close" onclick="closePdfFullscreen()">✕ Close</button>
     <div class="pdf-fs-title" id="pdf-fs-title">Study Notes</div>
-    <span class="pdf-fs-badge">MLA-C01</span>
+    <span class="pdf-fs-badge" id="pdf-fs-badge">MLA-C01</span>
     <a class="pdf-fs-open" id="pdf-fs-open-link" href="#" target="_blank" rel="noopener">↗ Open PDF</a>
   </div>
   <div class="pdf-fs-body">
@@ -1670,11 +1688,11 @@ const EXAM_META={
 function applyTheme(dark){
   document.documentElement.setAttribute('data-theme',dark?'dark':'light');
   ['theme-cb-home','theme-cb-exam'].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.checked=!dark;
+    const el=document.getElementById(id); if(el) el.checked=!dark; // checked=true → light mode → thumb slides right (☀️)
   });
   try{ localStorage.setItem('awsCertTheme',dark?'dark':'light'); }catch(e){}
 }
-function toggleTheme(cb){ applyTheme(!cb.checked); }
+function toggleTheme(cb){ applyTheme(!cb.checked); /* cb.checked=true means light selected → dark=false */ }
 (function(){
   let saved; try{ saved=localStorage.getItem('awsCertTheme'); }catch(e){}
   const prefersDark=window.matchMedia('(prefers-color-scheme:dark)').matches;
@@ -1696,8 +1714,8 @@ async function openExam(id){
   Object.assign(quizState,{questions:[],current:0,answers:{},score:{correct:0,wrong:0},done:false,questionTimes:{}});
   Object.assign(revState,{answers:{},filter:'all',topic:'All Topics',search:'',page:0,pendingRev:{}});loadRevState();
   document.querySelectorAll('.rev-filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.filter==='all'));
-  // Show Notes tab only for MLA
-  document.getElementById('tab-notes').style.display=id==='mla'?'':'none';
+  // Show Notes tab for MLA and DEA
+  document.getElementById('tab-notes').style.display=(id==='mla'||id==='dea')?'':'none';
   // Reset note viewer state
   activeNoteIdx=null;
   notesDrawerOpen=false;
@@ -2350,14 +2368,15 @@ function loadRevState(){
     if(saved){revState.answers=JSON.parse(saved);}
   }catch(e){}
 }
-/* ═══ NOTES (MLA only) ═══
- * To add more PDFs, simply append an object to MLA_NOTES below.
+/* ═══ NOTES (MLA + DEA) ═══
+ * To add more PDFs, simply append an object to MLA_NOTES or DEA_NOTES below.
  * Each entry needs:
  *   title  — display name shown in the toolbar and drawer
  *   sub    — short subtitle (e.g. section number or topic label)
- *   file   — filename as stored in your GitHub repo under /notes/mla/
+ *   file   — filename as stored in your GitHub repo under /notes/{exam}/
  * ════════════════════════════════════════════════════════════════ */
 const MLA_NOTES_BASE = 'https://raw.githubusercontent.com/pratik-p-crest/AWS-Exam-Prep/main/notes/mla/';
+const DEA_NOTES_BASE = 'https://raw.githubusercontent.com/pratik-p-crest/AWS-Exam-Prep/main/notes/dea/';
 
 const MLA_NOTES = [
   {
@@ -2428,6 +2447,77 @@ const MLA_NOTES = [
   // ── Add more notes below this line ──
 ];
 
+const DEA_NOTES = [
+  {
+    title: 'AWS Analytics Complete Guide',
+    sub:   'DEA-C01 · Analytics',
+    file:  'AWS_Analytics_Complete_Guide.pdf'
+  },
+  {
+    title: 'AWS App Integration Guide',
+    sub:   'DEA-C01 · App Integration',
+    file:  'AWS_App_Integration_Guide.pdf'
+  },
+  {
+    title: 'AWS Compute Services Guide',
+    sub:   'DEA-C01 · Compute',
+    file:  'AWS_Compute_Services_Guide.pdf'
+  },
+  {
+    title: 'AWS Containers Complete Guide',
+    sub:   'DEA-C01 · Containers',
+    file:  'AWS_Containers_Complete_Guide.pdf'
+  },
+  {
+    title: 'AWS Database Services Complete Guide',
+    sub:   'DEA-C01 · Databases',
+    file:  'AWS_Database_Services_Complete_Guide.pdf'
+  },
+  {
+    title: 'AWS Developer Tools Complete Guide',
+    sub:   'DEA-C01 · Developer Tools',
+    file:  'AWS_DeveloperTools_Complete_Guide.pdf'
+  },
+  {
+    title: 'AWS FinOps, API Gateway & SageMaker Guide',
+    sub:   'DEA-C01 · FinOps · API · SageMaker',
+    file:  'AWS_FinOps_APIGateway_SageMaker_Guide.pdf'
+  },
+  {
+    title: 'AWS Management & Governance Complete Guide',
+    sub:   'DEA-C01 · Management',
+    file:  'AWS_ManagementGovernance_Complete_Guide.pdf'
+  },
+  {
+    title: 'AWS Migration & Transfer Guide',
+    sub:   'DEA-C01 · Migration',
+    file:  'AWS_Migration_Transfer_Guide.pdf'
+  },
+  {
+    title: 'AWS Networking Complete Guide',
+    sub:   'DEA-C01 · Networking',
+    file:  'AWS_Networking_Complete_Guide.pdf'
+  },
+  {
+    title: 'AWS Security Complete Guide',
+    sub:   'DEA-C01 · Security',
+    file:  'AWS_Security_Complete_Guide.pdf'
+  },
+  {
+    title: 'AWS Storage Services Guide',
+    sub:   'DEA-C01 · Storage',
+    file:  'AWS_Storage_Services_Guide.pdf'
+  },
+  // ── Add more DEA notes below this line ──
+];
+
+// Returns the notes array for the current exam
+function getActiveNotes(){ return currentExam==='dea' ? DEA_NOTES : MLA_NOTES; }
+// Returns the base URL for the current exam's notes
+function getActiveNotesBase(){ return currentExam==='dea' ? DEA_NOTES_BASE : MLA_NOTES_BASE; }
+// Returns the badge label for the current exam's notes
+function getNotesBadge(){ return currentExam==='dea' ? 'DEA-C01' : 'MLA-C01'; }
+
 let activeNoteIdx = null;
 let notesDrawerOpen = false;
 
@@ -2448,11 +2538,12 @@ function closeNotesDrawer(){
 
 function renderNotesList() {
   const list = document.getElementById('notes-list');
-  if (!MLA_NOTES.length) {
+  const notes = getActiveNotes();
+  if (!notes.length) {
     list.innerHTML = '<div style="font-family:var(--mono);font-size:11px;color:var(--muted);padding:10px 4px">No notes available yet.</div>';
     return;
   }
-  list.innerHTML = MLA_NOTES.map((n, i) => `
+  list.innerHTML = notes.map((n, i) => `
     <button class="notes-item${activeNoteIdx === i ? ' active-note' : ''}" onclick="loadNote(${i})">
       <span class="notes-item-icon">📄</span>
       <div class="notes-item-info">
@@ -2466,12 +2557,15 @@ function renderNotesList() {
 
 // Update inline toolbar title, Open PDF link, and button visibility
 function syncInlineToolbar(idx) {
-  const note = MLA_NOTES[idx];
+  const notes = getActiveNotes();
+  const note = notes[idx];
   if (!note) return;
-  const rawUrl = MLA_NOTES_BASE + encodeURIComponent(note.file);
+  const rawUrl = getActiveNotesBase() + encodeURIComponent(note.file);
+  const badge = getNotesBadge();
   const titleEl = document.getElementById('notes-toolbar-title');
   titleEl.textContent = note.title;
   titleEl.classList.remove('placeholder');
+  document.getElementById('notes-viewer-badge').textContent = badge;
   document.getElementById('notes-open-btn').href = rawUrl;
   document.getElementById('notes-open-btn').classList.add('visible');
   document.getElementById('notes-fs-btn').classList.add('visible');
@@ -2479,8 +2573,8 @@ function syncInlineToolbar(idx) {
 
 // Load PDF into the inline background iframe (hidden behind fullscreen)
 function loadInlineIframe(idx) {
-  const note = MLA_NOTES[idx];
-  const rawUrl = MLA_NOTES_BASE + encodeURIComponent(note.file);
+  const note = getActiveNotes()[idx];
+  const rawUrl = getActiveNotesBase() + encodeURIComponent(note.file);
   const viewerUrl = 'https://docs.google.com/viewer?embedded=true&url=' + encodeURIComponent(rawUrl);
   document.getElementById('notes-empty').style.display = 'none';
   const frameWrap = document.getElementById('notes-frame-wrap');
@@ -2498,11 +2592,12 @@ function loadInlineIframe(idx) {
 
 // Load PDF into the fullscreen iframe
 function loadFsIframe(idx) {
-  const note = MLA_NOTES[idx];
-  const rawUrl = MLA_NOTES_BASE + encodeURIComponent(note.file);
+  const note = getActiveNotes()[idx];
+  const rawUrl = getActiveNotesBase() + encodeURIComponent(note.file);
   const viewerUrl = 'https://docs.google.com/viewer?embedded=true&url=' + encodeURIComponent(rawUrl);
   document.getElementById('pdf-fs-title').textContent = note.title;
   document.getElementById('pdf-fs-open-link').href = rawUrl;
+  document.getElementById('pdf-fs-badge').textContent = getNotesBadge();
   const spinner = document.getElementById('pdf-fs-spinner');
   const fsIframe = document.getElementById('pdf-fs-iframe');
   spinner.classList.remove('hidden');
@@ -2529,13 +2624,13 @@ let pdfFsMenuOpen = false;
 let pdfScrollTipShown = false;
 
 function openPdfFullscreen(idx) {
-  if (idx === null || idx === undefined || !MLA_NOTES[idx]) return;
+  if (idx === null || idx === undefined || !getActiveNotes()[idx]) return;
   activeNoteIdx = idx;
   syncInlineToolbar(idx);
   renderNotesList();
   loadFsIframe(idx);
   document.getElementById('pdf-fullscreen').classList.add('open');
-  const hasMultiple = MLA_NOTES.length > 1;
+  const hasMultiple = getActiveNotes().length > 1;
   // Desktop: show floating pill
   document.getElementById('pdf-section-toggle').classList.toggle('visible', hasMultiple);
   // Mobile: show switcher bar
@@ -2599,8 +2694,9 @@ function closeSectionsSheet() {
 
 function renderFsSections() {
   const list = document.getElementById('pdf-sections-list');
-  if (!list || !MLA_NOTES.length) return;
-  list.innerHTML = MLA_NOTES.map((n, i) => `
+  const notes = getActiveNotes();
+  if (!list || !notes.length) return;
+  list.innerHTML = notes.map((n, i) => `
     <button class="pdf-section-item${activeNoteIdx === i ? ' active-sec' : ''}" onclick="switchFsSection(${i})">
       <span class="pdf-sec-icon">📄</span>
       <div class="pdf-sec-info">
@@ -2609,15 +2705,16 @@ function renderFsSections() {
       </div>
       <span class="pdf-sec-tick">✓</span>
     </button>`).join('');
-  const cur = MLA_NOTES[activeNoteIdx];
+  const cur = notes[activeNoteIdx];
   const lbl = document.getElementById('pdf-pill-label');
   if (lbl) lbl.textContent = cur ? cur.sub || cur.title : 'Sections';
 }
 
 function renderSheetSections() {
   const list = document.getElementById('pdf-sheet-list');
-  if (!list || !MLA_NOTES.length) return;
-  list.innerHTML = MLA_NOTES.map((n, i) => `
+  const notes = getActiveNotes();
+  if (!list || !notes.length) return;
+  list.innerHTML = notes.map((n, i) => `
     <button class="pdf-sheet-item${activeNoteIdx === i ? ' active-sec' : ''}" onclick="switchSheetSection(${i})">
       <div class="pdf-sheet-num">${i + 1}</div>
       <div class="pdf-sheet-info">
@@ -2629,7 +2726,7 @@ function renderSheetSections() {
 }
 
 function syncSwitcherBar() {
-  const cur = MLA_NOTES[activeNoteIdx];
+  const cur = getActiveNotes()[activeNoteIdx];
   const el = document.getElementById('pdf-switcher-current');
   if (el && cur) el.textContent = cur.title;
 }
