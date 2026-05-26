@@ -597,6 +597,49 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 @keyframes pulse-danger{0%,100%{opacity:1;box-shadow:0 0 20px rgba(248,113,113,.2)}50%{opacity:.75;box-shadow:0 0 30px rgba(248,113,113,.4)}}
 .timer-icon{font-size:12px}
 
+/* ═══ PAUSE BUTTON ═══ */
+.exam-pause-btn{
+  display:none;align-items:center;gap:5px;
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--text-secondary);font-family:var(--mono);font-size:10px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.5px;padding:5px 11px;border-radius:9px;
+  cursor:pointer;transition:all .18s;white-space:nowrap;flex-shrink:0;
+}
+.exam-pause-btn:hover{color:var(--text);border-color:var(--border-bright);background:var(--surface3)}
+.exam-pause-btn.paused{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.4);color:var(--yellow)}
+[data-theme="dark"] .exam-pause-btn.paused{box-shadow:0 0 14px rgba(245,158,11,.15)}
+
+/* ═══ PAUSE OVERLAY ═══ */
+#exam-pause-overlay{
+  position:fixed;inset:0;z-index:9000;
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--bg);
+  backdrop-filter:blur(0px);
+  -webkit-backdrop-filter:blur(0px);
+  padding:20px;
+  text-align:center;
+}
+#exam-pause-overlay.visible{display:flex}
+.pause-overlay-icon{font-size:52px;margin-bottom:20px;line-height:1}
+.pause-overlay-title{font-family:var(--display);font-size:clamp(1.4rem,5vw,2rem);font-weight:800;letter-spacing:-.5px;margin-bottom:10px;color:var(--text)}
+.pause-overlay-sub{font-size:14px;color:var(--text-secondary);font-family:var(--mono);line-height:1.7;margin-bottom:28px;max-width:360px}
+.pause-overlay-timer{font-family:var(--mono);font-size:28px;font-weight:700;color:var(--text);margin-bottom:8px;letter-spacing:1px}
+.pause-overlay-timer-lbl{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:32px;font-weight:600}
+.pause-resume-btn{
+  padding:14px 36px;border-radius:14px;border:none;
+  font-family:var(--display);font-size:15px;font-weight:800;letter-spacing:.3px;
+  cursor:pointer;transition:all .2s;
+}
+.pause-resume-btn:hover{transform:translateY(-2px)}
+.exam-aif .pause-resume-btn{background:var(--aif-accent);color:#000}
+[data-theme="dark"] .exam-aif .pause-resume-btn{box-shadow:0 0 28px rgba(245,158,11,.4)}
+.exam-mla .pause-resume-btn{background:var(--mla-accent);color:#fff}
+[data-theme="dark"] .exam-mla .pause-resume-btn{box-shadow:0 0 28px rgba(167,139,250,.4)}
+.exam-dea .pause-resume-btn{background:var(--dea-accent);color:#fff}
+[data-theme="dark"] .exam-dea .pause-resume-btn{box-shadow:0 0 28px rgba(96,165,250,.4)}
+.pause-progress-info{margin-top:20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.pause-prog-pill{font-family:var(--mono);font-size:11px;font-weight:600;padding:5px 14px;border-radius:20px;background:var(--surface2);border:1px solid var(--border);color:var(--text-secondary)}
+
 /* ═══ DOT STATUS IN EXAM MODE ═══ */
 .q-dot.ans-pending{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.5);color:var(--yellow)}
 
@@ -1505,6 +1548,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <div class="exam-header-title" id="exam-header-title">AI Practitioner</div>
     <div class="exam-header-badge" id="exam-header-badge">AIF-C01</div>
     <div class="exam-timer" id="exam-timer" style="display:none"><span class="timer-icon">⏱</span><span id="timer-display">2:10:00</span></div>
+    <button class="exam-pause-btn" id="exam-pause-btn" onclick="toggleExamPause()" style="display:none">⏸ Pause</button>
     <div class="exam-header-stats" id="exam-header-stats">
       <div class="stat-item"><div class="stat-dot blue"></div><span id="hdr-total">0</span></div>
       <div class="stat-item"><div class="stat-dot green"></div><span id="hdr-correct">0</span></div>
@@ -1633,6 +1677,17 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   </div>
 
 </div><!-- /view-exam -->
+
+<!-- ════════════════ EXAM PAUSE OVERLAY ════════════════ -->
+<div id="exam-pause-overlay">
+  <div class="pause-overlay-icon">⏸</div>
+  <div class="pause-overlay-title">Exam Paused</div>
+  <div class="pause-overlay-sub">Your progress and timer are saved.<br>Questions are hidden until you resume.</div>
+  <div class="pause-overlay-timer" id="pause-timer-display">—</div>
+  <div class="pause-overlay-timer-lbl">Time Remaining</div>
+  <button class="pause-resume-btn" onclick="toggleExamPause()">▶ Resume Exam</button>
+  <div class="pause-progress-info" id="pause-progress-info"></div>
+</div>
 
 <!-- ════════════════ FULLSCREEN PDF OVERLAY ════════════════ -->
 <div class="pdf-fullscreen" id="pdf-fullscreen">
@@ -1777,7 +1832,17 @@ async function openExam(id){
   setupQuizConfig();
 }
 
-function goHome(){ stopExamTimer(); showView('home'); currentExam=null; }
+function goHome(){
+  if(examPaused){
+    examPaused=false;
+    document.getElementById('exam-pause-overlay').className='';
+    document.getElementById('exam-pause-btn').classList.remove('paused');
+    delete document.body.dataset.examPaused;
+  }
+  stopExamTimer();
+  showView('home');
+  currentExam=null;
+}
 function showView(id){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.getElementById('view-'+id).classList.add('active'); }
 
 function setFooterVisible(vis){
@@ -1801,10 +1866,13 @@ function switchMode(mode){
   document.getElementById('exam-header-stats').style.display='none'; // hidden in exam mode
   // timer: only show in quiz mode when exam is running
   const timerEl=document.getElementById('exam-timer');
+  const pauseBtn=document.getElementById('exam-pause-btn');
   if(mode==='quiz'&&quizState.questions&&quizState.questions.length>0&&!quizState.done){
     timerEl.style.display='flex';
+    pauseBtn.style.display='flex';
   } else if(mode!=='quiz'){
     timerEl.style.display='none';
+    pauseBtn.style.display='none';
   }
   // footer: only show in revision
   setFooterVisible(mode==='revision');
@@ -1841,6 +1909,7 @@ function setupQuizConfig(){
   document.getElementById('quiz-session').classList.remove('active');
   stopExamTimer();
   document.getElementById('exam-timer').style.display='none';
+  document.getElementById('exam-pause-btn').style.display='none';
   document.getElementById('exam-header-stats').style.display='none';
 }
 
@@ -1873,11 +1942,14 @@ function launchQuiz(){
   examSecondsLeft=EXAM_DURATION;
   startExamTimer();
   document.getElementById('exam-timer').style.display='flex';
+  document.getElementById('exam-pause-btn').style.display='flex';
   questionStartTime=Date.now();
   renderQ();
 }
 
 /* ─── Timer ─── */
+let examPaused = false;
+
 function startExamTimer(){
   stopExamTimer();
   updateTimerDisplay();
@@ -1889,6 +1961,58 @@ function startExamTimer(){
 }
 function stopExamTimer(){
   if(examTimerInterval){ clearInterval(examTimerInterval); examTimerInterval=null; }
+}
+
+/* ─── Pause / Resume ─── */
+function toggleExamPause(){
+  examPaused=!examPaused;
+  const overlay=document.getElementById('exam-pause-overlay');
+  const pauseBtn=document.getElementById('exam-pause-btn');
+  const viewExam=document.getElementById('view-exam');
+
+  if(examPaused){
+    // Pause: stop timer, record current question time, show overlay
+    stopExamTimer();
+    recordQuestionTime(quizState.current);
+    // Sync the overlay's timer display and progress
+    updatePauseOverlay();
+    // Clone the exam accent class onto the overlay for themed button
+    overlay.className='visible';
+    ['exam-aif','exam-mla','exam-dea'].forEach(cls=>{
+      if(viewExam.classList.contains(cls)) overlay.classList.add(cls);
+    });
+    pauseBtn.classList.add('paused');
+    pauseBtn.textContent='▶ Resume';
+    // Block keyboard navigation while paused
+    document.body.dataset.examPaused='1';
+  } else {
+    // Resume: hide overlay, restart timer, reset question start time
+    overlay.className='';
+    pauseBtn.classList.remove('paused');
+    pauseBtn.textContent='⏸ Pause';
+    delete document.body.dataset.examPaused;
+    questionStartTime=Date.now();
+    startExamTimer();
+  }
+}
+
+function updatePauseOverlay(){
+  // Sync remaining time
+  const h=Math.floor(examSecondsLeft/3600),m=Math.floor((examSecondsLeft%3600)/60),s=examSecondsLeft%60;
+  const timeStr=`${h>0?h+':':''}${String(m).padStart(h>0?2:1,'0')}:${String(s).padStart(2,'0')}`;
+  const pauseTimerEl=document.getElementById('pause-timer-display');
+  if(pauseTimerEl) pauseTimerEl.textContent=timeStr;
+  // Sync progress pills
+  const st=quizState;
+  const answeredCount=st.answers?Object.values(st.answers).filter(a=>a.selected&&a.selected.length>0).length:0;
+  const total=st.questions?st.questions.length:0;
+  const unanswered=total-answeredCount;
+  const infoEl=document.getElementById('pause-progress-info');
+  if(infoEl) infoEl.innerHTML=`
+    <span class="pause-prog-pill">📝 ${total} Questions</span>
+    <span class="pause-prog-pill">✓ ${answeredCount} Answered</span>
+    <span class="pause-prog-pill">— ${unanswered} Remaining</span>
+  `;
 }
 function updateTimerDisplay(){
   const el=document.getElementById('exam-timer');
@@ -1921,7 +2045,7 @@ function fmtTime(sec){
 /* ─── Render question (exam mode — no instant feedback) ─── */
 function renderQ(){
   const c=document.getElementById('quiz-session-inner'),st=quizState;
-  if(st.done){stopExamTimer();document.getElementById('exam-timer').style.display='none';renderResults();return;}
+  if(st.done){stopExamTimer();document.getElementById('exam-timer').style.display='none';document.getElementById('exam-pause-btn').style.display='none';renderResults();return;}
   const q=st.questions[st.current],ans=st.answers[st.current]||{selected:[]};
   const total=st.questions.length,isMulti=q.question_type==='multi-choice'||q.answer.length>1;
   // Navigation dots: cur=current, ans-pending=answered-not-submitted, neutral=untouched
@@ -2055,14 +2179,23 @@ function qReset(){
 function doResetExam(){
   const modal=document.getElementById('submit-modal');
   if(modal) modal.remove();
+  // Also dismiss pause overlay if active
+  if(examPaused){
+    examPaused=false;
+    document.getElementById('exam-pause-overlay').className='';
+    document.getElementById('exam-pause-btn').classList.remove('paused');
+    delete document.body.dataset.examPaused;
+  }
   stopExamTimer();
   document.getElementById('exam-timer').style.display='none';
+  document.getElementById('exam-pause-btn').style.display='none';
   const st=quizState;
   st.done=false;st.current=0;st.answers={};st.score={correct:0,wrong:0};st.questionTimes={};
   st.questions=[...st.questions].sort(()=>Math.random()-.5);
   examSecondsLeft=EXAM_DURATION;
   startExamTimer();
   document.getElementById('exam-timer').style.display='flex';
+  document.getElementById('exam-pause-btn').style.display='flex';
   questionStartTime=Date.now();
   renderQ();
 }
@@ -2820,6 +2953,8 @@ document.getElementById('notes-fs-btn').addEventListener('click', function() {
 
 /* ═══ KEYBOARD SHORTCUTS ═══ */
 document.addEventListener('keydown',function(e){
+  // Block all navigation keyboard shortcuts while exam is paused
+  if(document.body.dataset.examPaused) return;
   if(e.key==='Escape'){
     if(document.getElementById('pdf-fullscreen').classList.contains('open')){closePdfFullscreen();return;}
   }
