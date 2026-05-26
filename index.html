@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.50.0/dist/umd/supabase.min.js"></script>
 <style>
 /* ═══ THEME TOKENS ═══ */
 :root {
@@ -1494,6 +1495,82 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 /* ═══ PROGRESS PERSISTENCE INDICATOR ═══ */
 .save-indicator{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:4px 0;text-align:center;opacity:0;transition:opacity .3s}
 .save-indicator.show{opacity:1}
+
+/* ═══ AUTH MODAL ═══ */
+.auth-overlay{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);pointer-events:none}
+.auth-overlay.visible{display:flex;pointer-events:all}
+.auth-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px 28px;max-width:400px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,0.5)}
+[data-theme="dark"] .auth-overlay.visible{display:flex;pointer-events:all}
+.auth-box{box-shadow:0 32px 80px rgba(0,0,0,0.7)}
+.auth-logo{font-family:var(--display);font-size:20px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px;color:var(--text)}
+.auth-logo span{color:var(--aif-accent)}
+.auth-title{font-family:var(--display);font-size:22px;font-weight:800;margin-bottom:6px;color:var(--text)}
+.auth-sub{font-size:13px;color:var(--text-secondary);margin-bottom:24px;line-height:1.6}
+.auth-tabs{display:flex;gap:0;margin-bottom:22px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.auth-tab{flex:1;padding:9px;font-family:var(--mono);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;border:none;background:transparent;color:var(--muted);cursor:pointer;transition:all .18s}
+.auth-tab.active{background:var(--aif-accent);color:#000}
+.auth-field{margin-bottom:14px}
+.auth-label{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;display:block;font-weight:700}
+.auth-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:var(--sans);font-size:14px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.auth-input:focus{border-color:var(--aif-accent)}
+.auth-input::placeholder{color:var(--muted)}
+.auth-btn{width:100%;padding:13px;border-radius:12px;border:none;background:var(--aif-accent);color:#000;font-family:var(--display);font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;margin-top:4px;letter-spacing:.3px}
+.auth-btn:hover{opacity:.9;transform:translateY(-1px)}
+.auth-btn:disabled{opacity:.5;cursor:default;transform:none}
+.auth-err{font-family:var(--mono);font-size:11px;color:var(--red);margin-top:10px;padding:8px 12px;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);border-radius:8px;display:none}
+.auth-err.show{display:block}
+.auth-ok{font-family:var(--mono);font-size:11px;color:var(--green);margin-top:10px;padding:8px 12px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);border-radius:8px;display:none}
+.auth-ok.show{display:block}
+
+/* ═══ USER CHIP (home nav) ═══ */
+.user-chip{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:5px 12px 5px 6px;cursor:pointer;transition:all .18s;flex-shrink:0}
+.user-chip:hover{border-color:var(--border-bright);background:var(--surface3)}
+.user-avatar{width:26px;height:26px;border-radius:50%;background:var(--aif-accent);color:#000;font-family:var(--display);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.user-name{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--text);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* User menu dropdown */
+.user-menu{position:absolute;top:calc(var(--header-h) + 8px);right:16px;z-index:9999;background:var(--surface);border:1px solid var(--border);border-radius:14px;min-width:200px;box-shadow:0 16px 48px rgba(0,0,0,.4);display:none;pointer-events:none}
+.user-menu.open{display:block;pointer-events:all}
+.user-menu-header{padding:14px 16px 10px;border-bottom:1px solid var(--border)}
+.user-menu-email{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:2px;word-break:break-all}
+.user-menu-name{font-family:var(--display);font-size:14px;font-weight:700;color:var(--text)}
+.user-menu-item{width:100%;padding:11px 16px;border:none;background:transparent;color:var(--text-secondary);font-family:var(--mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;transition:background .15s;text-align:left;display:block}
+.user-menu-item:hover{background:var(--surface2);color:var(--text)}
+.user-menu-item.danger{color:var(--red)}
+.user-menu-item.danger:hover{background:rgba(248,113,113,.08)}
+
+/* ═══ BOOKMARK BUTTON ═══ */
+.rev-bookmark-btn{
+  margin-left:auto;width:34px;height:34px;border-radius:8px;border:1px solid var(--border);
+  background:transparent;color:var(--muted);cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;
+}
+.rev-bookmark-btn:hover{border-color:var(--yellow);color:var(--yellow);background:rgba(245,158,11,.08);transform:scale(1.1);}
+.rev-bookmark-btn.bookmarked{border-color:var(--yellow);color:var(--yellow);background:rgba(245,158,11,.15);box-shadow:0 0 0 2px rgba(245,158,11,.25);}
+[data-theme="dark"] .rev-bookmark-btn.bookmarked{box-shadow:0 0 0 2px rgba(245,158,11,.3),0 0 14px rgba(245,158,11,.2);}
+
+/* Bookmark filter button styling */
+.rev-filter-btn.bookmarked-f.active{background:var(--yellow);border-color:var(--yellow);color:#000}
+
+/* ═══ SIGN IN BUTTON ═══ */
+.signin-btn{
+  padding:6px 18px;border-radius:20px;
+  border:1px solid var(--border);background:var(--surface2);
+  color:var(--text-secondary);font-family:var(--mono);font-size:11px;
+  font-weight:700;cursor:pointer;transition:all .18s;
+  text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;flex-shrink:0;
+}
+.signin-btn:hover{border-color:var(--aif-accent);color:var(--aif-accent);background:rgba(245,158,11,.08)}
+[data-theme="light"] .signin-btn{background:#fff;border-color:var(--border-bright)}
+
+/* ═══ SYNC STATUS TOAST ═══ */
+.sync-toast{
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:9999;
+  background:var(--surface);border:1px solid var(--border);border-radius:20px;
+  padding:8px 16px;font-family:var(--mono);font-size:11px;color:var(--text-secondary);
+  box-shadow:0 8px 24px rgba(0,0,0,.3);display:none;align-items:center;gap:6px;white-space:nowrap;
+}
+.sync-toast.show{display:flex}
 </style>
 </head>
 <body>
@@ -1502,11 +1579,15 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 <div class="view active" id="view-home">
   <nav class="home-nav">
     <div class="home-logo">AWS<span class="hl">CERT</span>HUB</div>
-    <label class="theme-toggle" title="Toggle theme">
-      <input type="checkbox" id="theme-cb-home" onchange="toggleTheme(this)">
-      <div class="toggle-track"><div class="toggle-icons"><span>🌙</span><span>☀️</span></div></div>
-    </label>
+    <div style="display:flex;align-items:center;gap:10px;margin-left:auto;flex-shrink:0">
+      <div id="home-user-area"><button class="signin-btn" onclick="(function(){var o=document.getElementById('auth-overlay');if(o){o.style.setProperty('display','flex','important');o.style.setProperty('pointer-events','all','important');o.style.setProperty('z-index','99999','important');}else{alert('Modal not found');}})()">Sign In</button></div>
+      <label class="theme-toggle" title="Toggle theme">
+        <input type="checkbox" id="theme-cb-home" onchange="toggleTheme(this)">
+        <div class="toggle-track"><div class="toggle-icons"><span>🌙</span><span>☀️</span></div></div>
+      </label>
+    </div>
   </nav>
+
   <div class="home-hero">
     <h1>Master Your <em>AWS</em> Certification</h1>
     <p>Focused practice sessions, instant feedback, and revision tools across three key AWS exams.</p>
@@ -1555,6 +1636,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <div class="stat-item"><div class="stat-dot red"></div><span id="hdr-wrong">0</span></div>
     </div>
     <button class="rev-menu-btn" id="rev-menu-btn" onclick="openRevSidebar()" style="display:none">☰</button>
+    <div id="exam-user-area" style="margin-left:6px"></div>
     <label class="theme-toggle" title="Toggle theme" style="margin-left:6px">
       <input type="checkbox" id="theme-cb-exam" onchange="toggleTheme(this)">
       <div class="toggle-track"><div class="toggle-icons"><span>🌙</span><span>☀️</span></div></div>
@@ -1610,6 +1692,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
           <button class="rev-filter-btn active" data-filter="all">All</button>
           <button class="rev-filter-btn" data-filter="unanswered">New</button>
           <button class="rev-filter-btn wrong-f" data-filter="wrong">Wrong</button>
+          <button class="rev-filter-btn bookmarked-f" data-filter="bookmarked">⭐</button>
         </div>
         <div class="rev-topic-list" id="rev-topic-list"></div>
         <div class="rev-sidebar-bottom">
@@ -1740,11 +1823,365 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   </button>
 </div>
 
+<!-- User dropdown menu -->
+<div class="user-menu" id="user-menu-home" style="position:fixed;top:50px;right:16px;"></div>
+
+<!-- ════════════════ AUTH MODAL ════════════════ -->
+<div class="auth-overlay" id="auth-overlay" style="display:none" onclick="hideAuthModal()">
+  <div class="auth-box" onclick="event.stopPropagation()">
+    <div class="auth-logo">AWS<span>CERT</span>HUB</div>
+    <div class="auth-title" id="auth-title">Welcome Back</div>
+    <div class="auth-sub" id="auth-sub">Sign in to save your progress and bookmarks across sessions.</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="auth-tab-signin" onclick="switchAuthTab('signin')">Sign In</button>
+      <button class="auth-tab" id="auth-tab-signup" onclick="switchAuthTab('signup')">Create Account</button>
+    </div>
+    <div id="auth-signup-name-field" class="auth-field" style="display:none">
+      <label class="auth-label">Display Name</label>
+      <input class="auth-input" type="text" id="auth-username" placeholder="e.g. Pratik" autocomplete="name">
+    </div>
+    <div class="auth-field">
+      <label class="auth-label">Email</label>
+      <input class="auth-input" type="email" id="auth-email" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <div class="auth-field">
+      <label class="auth-label">Password</label>
+      <input class="auth-input" type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="auth-btn" id="auth-submit-btn" onclick="doAuth()">Sign In →</button>
+    <div class="auth-err" id="auth-err"></div>
+    <div class="auth-ok" id="auth-ok"></div>
+  </div>
+</div>
+
+<!-- Sync toast -->
+<div class="sync-toast" id="sync-toast">⚡ Syncing…</div>
+
 <script>
 /* ═══ DATA ═══ */
 const QUESTIONS_DB={aif:[],mla:[],dea:[]};
 const QUESTIONS_LOADED={aif:false,mla:false,dea:false};
 const QUESTIONS_BASE_URL='https://raw.githubusercontent.com/pratik-p-crest/AWS-Exam-Prep/main/questions';
+
+/* ═══ SUPABASE INIT ═══ */
+const SUPABASE_URL = 'https://ymzvvddtthplrjkbwwwg.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_KwW2w07-mvYIk-E4u0b5vA_0TnEtMX3';
+let supabaseClient = null;
+try {
+  if(window.supabase && window.supabase.createClient) {
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: false
+      }
+    });
+    console.log('[INIT] Supabase client created successfully:', supabaseClient);
+  } else {
+    console.error('[INIT] Supabase SDK not available on window.supabase');
+  }
+} catch(e) { console.error('[INIT] Supabase init failed:', e); }
+
+let currentUser = null;
+let userBookmarks = {}; // { examId: Set of question_ids }
+let userAttempts = {}; // { examId: { question_id: {selected, is_correct} } }
+
+/* ─── AUTH UI ─── */
+function showAuthModal(){
+  const o=document.getElementById('auth-overlay');
+  o.style.cssText='display:flex!important;pointer-events:all!important;position:fixed;inset:0;z-index:99999;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px)';
+}
+function hideAuthModal(){
+  const o=document.getElementById('auth-overlay');
+  o.style.cssText='display:none;pointer-events:none';
+  clearAuthFields();
+}
+
+function switchAuthTab(tab){
+  const isSignin = tab==='signin';
+  document.getElementById('auth-tab-signin').classList.toggle('active', isSignin);
+  document.getElementById('auth-tab-signup').classList.toggle('active', !isSignin);
+  document.getElementById('auth-signup-name-field').style.display = isSignin ? 'none' : '';
+  document.getElementById('auth-title').textContent = isSignin ? 'Welcome Back' : 'Create Account';
+  document.getElementById('auth-sub').textContent = isSignin
+    ? 'Sign in to save your progress and bookmarks across sessions.'
+    : 'Create a free account — your progress syncs across all devices.';
+  document.getElementById('auth-submit-btn').textContent = isSignin ? 'Sign In →' : 'Create Account →';
+  document.getElementById('auth-err').classList.remove('show');
+  document.getElementById('auth-ok').classList.remove('show');
+}
+
+function clearAuthFields(){
+  ['auth-email','auth-password','auth-username'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('auth-err').classList.remove('show');
+  document.getElementById('auth-ok').classList.remove('show');
+}
+
+async function doAuth(){
+  const isSignup = document.getElementById('auth-tab-signup').classList.contains('active');
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const username = (document.getElementById('auth-username')?.value||'').trim();
+  const errEl = document.getElementById('auth-err');
+  const okEl = document.getElementById('auth-ok');
+  const btn = document.getElementById('auth-submit-btn');
+
+  // Reset messages
+  errEl.classList.remove('show'); okEl.classList.remove('show');
+
+  // Validate
+  if(!email){ errEl.textContent='Please enter your email.'; errEl.classList.add('show'); return; }
+  if(!password){ errEl.textContent='Please enter your password.'; errEl.classList.add('show'); return; }
+  if(password.length < 6){ errEl.textContent='Password must be at least 6 characters.'; errEl.classList.add('show'); return; }
+  if(!supabaseClient){ errEl.textContent='Auth service not available — check your internet connection.'; errEl.classList.add('show'); return; }
+
+  btn.disabled=true;
+  btn.textContent='Please wait…';
+
+  try{
+    if(isSignup){
+      // Sign up
+      const {data, error} = await supabaseClient.auth.signUp({
+        email: email,
+        password: password,
+        options: { data: { username: username || email.split('@')[0] } }
+      });
+      if(error) throw error;
+
+      if(data.user && data.session){
+        // Email confirmation disabled — user is immediately active
+        const uname = username || email.split('@')[0];
+        // Save profile
+        await supabaseClient.from('profiles').upsert({id: data.user.id, username: uname});
+        hideAuthModal();
+        await onUserSignedIn(data.user);
+      } else if(data.user && !data.session){
+        // Email confirmation required
+        okEl.textContent = '✅ Account created! Please check your email to confirm, then sign in.';
+        okEl.classList.add('show');
+        btn.disabled=false;
+        btn.textContent='Create Account →';
+        return;
+      }
+
+    } else {
+      // Sign in
+      const {data, error} = await supabaseClient.auth.signInWithPassword({email, password});
+      if(error) throw error;
+      hideAuthModal();
+      await onUserSignedIn(data.user);
+    }
+
+  } catch(e){
+    let msg = e.message || 'Something went wrong.';
+    if(msg.includes('Invalid login')) msg = 'Incorrect email or password.';
+    if(msg.includes('already registered')) msg = 'This email is already registered. Please sign in instead.';
+    if(msg.includes('Email not confirmed')) msg = 'Please confirm your email first, then sign in.';
+    errEl.textContent = msg;
+    errEl.classList.add('show');
+  }
+
+  btn.disabled=false;
+  btn.textContent = isSignup ? 'Create Account →' : 'Sign In →';
+}
+
+async function onUserSignedIn(user){
+  currentUser = user;
+  // Fetch profile name
+  const {data:profile} = await supabaseClient.from('profiles').select('username').eq('id', user.id).single();
+  currentUser._username = profile?.username || user.email.split('@')[0];
+  // Load user data from Supabase
+  await loadUserDataFromSupabase();
+  renderUserArea();
+  showToast('✅ Signed in as '+currentUser._username);
+}
+
+function renderUserArea(){
+  const area = document.getElementById('home-user-area');
+  const examArea = document.getElementById('exam-user-area');
+  if(currentUser){
+    const initial = (currentUser._username||'U')[0].toUpperCase();
+    const chipHtml = `<div class="user-chip" onclick="toggleUserMenu()">
+      <div class="user-avatar">${initial}</div>
+      <span class="user-name">${currentUser._username}</span>
+      <span style="font-size:10px;color:var(--muted)">▾</span>
+    </div>`;
+    if(area) area.innerHTML = chipHtml;
+    if(examArea) examArea.innerHTML = `<div class="user-avatar" style="width:28px;height:28px;border-radius:50%;background:var(--yellow);color:#000;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer" title="Signed in as ${currentUser._username}" onclick="doSignOut()">${initial}</div>`;
+    const menu = document.getElementById('user-menu-home');
+    menu.innerHTML=`<div class="user-menu-header">
+      <div class="user-menu-name">${currentUser._username}</div>
+      <div class="user-menu-email">${currentUser.email}</div>
+    </div>
+    <button class="user-menu-item" onclick="closeUserMenu()">✕ Close</button>
+    <button class="user-menu-item danger" onclick="doSignOut()">Sign Out</button>`;
+  } else {
+    const signInBtn = `<button class="signin-btn" onclick="(function(){var o=document.getElementById('auth-overlay');if(o){o.style.setProperty('display','flex','important');o.style.setProperty('pointer-events','all','important');o.style.setProperty('z-index','99999','important');}})()" >Sign In</button>`;
+    if(area) area.innerHTML = signInBtn;
+    if(examArea) examArea.innerHTML = `<button style="font-size:10px;padding:4px 10px;border-radius:8px;border:1px solid var(--border-bright);background:transparent;color:var(--text-secondary);cursor:pointer;font-family:var(--mono);font-weight:700" onclick="(function(){var o=document.getElementById('auth-overlay');if(o){o.style.setProperty('display','flex','important');o.style.setProperty('pointer-events','all','important');o.style.setProperty('z-index','99999','important');}})()" >Sign In</button>`;
+  }
+}
+
+function toggleUserMenu(){
+  const m = document.getElementById('user-menu-home');
+  m.classList.toggle('open');
+}
+function closeUserMenu(){ document.getElementById('user-menu-home').classList.remove('open'); }
+
+document.addEventListener('click', function(e){
+  const menu = document.getElementById('user-menu-home');
+  const chip = document.querySelector('.user-chip');
+  if(menu && chip && !menu.contains(e.target) && !chip.contains(e.target)){
+    menu.classList.remove('open');
+  }
+});
+
+async function doSignOut(){
+  closeUserMenu();
+  await supabaseClient.auth.signOut();
+  currentUser = null;
+  userBookmarks = {};
+  userAttempts = {};
+  renderUserArea();
+  showToast('👋 Signed out');
+}
+
+/* ─── SYNC HELPERS ─── */
+function showToast(msg, duration=2500){
+  const t = document.getElementById('sync-toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), duration);
+}
+
+/* ─── SUPABASE DATA LOAD ─── */
+async function loadUserDataFromSupabase(){
+  if(!currentUser) return;
+  try{
+    // Load bookmarks
+    const {data:bms} = await supabaseClient.from('bookmarks').select('exam_id,question_index').eq('user_id', currentUser.id);
+    userBookmarks = {};
+    (bms||[]).forEach(b=>{
+      if(!userBookmarks[b.exam_id]) userBookmarks[b.exam_id] = new Set();
+      userBookmarks[b.exam_id].add(parseInt(b.question_index, 10));
+    });
+    // Load attempts → merge into revState.answers per exam
+    const {data:atts} = await supabaseClient.from('attempts').select('exam_id,question_index,selected_answers,is_correct').eq('user_id', currentUser.id);
+    userAttempts = {};
+    (atts||[]).forEach(a=>{
+      if(!userAttempts[a.exam_id]) userAttempts[a.exam_id]={};
+      userAttempts[a.exam_id][a.question_index] = {selected: a.selected_answers, correct: a.is_correct, submitted: true};
+    });
+  } catch(e){ console.error('Load user data error:', e); }
+}
+
+/* ─── BOOKMARK TOGGLE ─── */
+async function toggleBookmark(examId, questionIndex, questionText){
+  // DEBUG
+  console.log('[BM] toggleBookmark called', {examId, questionIndex, questionText});
+  console.log('[BM] currentUser:', currentUser ? {id: currentUser.id, email: currentUser.email} : null);
+  console.log('[BM] supabaseClient ready:', !!supabaseClient);
+
+  if(!currentUser){ 
+    alert('Not signed in! currentUser is null.\nPlease sign in first.');
+    return; 
+  }
+  if(!currentUser.id){ 
+    alert('currentUser exists but has no ID!\n' + JSON.stringify(currentUser));
+    return;
+  }
+  if(!supabaseClient){ showToast('❌ Supabase not connected'); return; }
+
+  const qIdx = parseInt(questionIndex, 10);
+  const set = userBookmarks[examId] = userBookmarks[examId] || new Set();
+  const btn = document.getElementById('rev-bm-btn-'+qIdx);
+
+  console.log('[BM] qIdx:', qIdx, '| already bookmarked:', set.has(qIdx));
+
+  if(set.has(qIdx)){
+    // REMOVE bookmark
+    set.delete(qIdx);
+    if(btn){ btn.classList.remove('bookmarked'); btn.title='Bookmark this question'; btn.textContent='☆'; }
+    console.log('[BM] Deleting from Supabase...');
+    const {error: delErr} = await supabaseClient.from('bookmarks').delete()
+      .eq('user_id', currentUser.id).eq('exam_id', examId).eq('question_index', qIdx);
+    console.log('[BM] Delete result error:', delErr);
+    if(delErr){
+      set.add(qIdx);
+      if(btn){ btn.classList.add('bookmarked'); btn.title='Remove bookmark'; btn.textContent='⭐'; }
+      showToast('❌ Error: ' + (delErr.message||delErr.code||JSON.stringify(delErr))); return;
+    }
+    showToast('🔖 Bookmark removed');
+  } else {
+    // ADD bookmark
+    set.add(qIdx);
+    if(btn){ btn.classList.add('bookmarked'); btn.title='Remove bookmark'; btn.textContent='⭐'; }
+    const record = {
+      user_id: currentUser.id,
+      exam_id: examId,
+      question_index: qIdx,
+      question_text: questionText
+    };
+    console.log('[BM] Inserting into Supabase:', record);
+    const {data: insData, error: addErr} = await supabaseClient.from('bookmarks').insert(record).select();
+    console.log('[BM] Insert result — data:', insData, '| error:', addErr);
+    if(addErr){
+      set.delete(qIdx);
+      if(btn){ btn.classList.remove('bookmarked'); btn.title='Bookmark this question'; btn.textContent='☆'; }
+      const errMsg = addErr.message || addErr.code || addErr.hint || JSON.stringify(addErr);
+      console.error('[BM] FULL ERROR OBJECT:', JSON.stringify(addErr));
+      alert('Bookmark Error:\n' + errMsg + '\n\nCheck console for details.');
+      return;
+    }
+    console.log('[BM] ✅ Bookmark saved successfully!');
+    showToast('⭐ Bookmarked!');
+  }
+  renderRevSidebar();
+}
+
+/* ─── SAVE ATTEMPT TO SUPABASE ─── */
+async function saveAttemptToSupabase(examId, questionIndex, selectedAnswers, isCorrect){
+  if(!currentUser) return;
+  try{
+    await supabaseClient.from('attempts').upsert({
+      user_id: currentUser.id,
+      exam_id: examId,
+      question_index: questionIndex,
+      selected_answers: selectedAnswers,
+      is_correct: isCorrect
+    }, {onConflict: 'user_id,exam_id,question_index'});
+  } catch(e){ console.error('Save attempt error:', e); }
+}
+
+/* ─── SESSION INIT ─── */
+async function initAuth(){
+  // Always show Sign In button immediately — update after async auth check
+  renderUserArea();
+  try {
+    if(supabaseClient === null) { console.warn('Supabase not loaded'); return; }
+    const {data:{session}} = await supabaseClient.auth.getSession();
+    if(session?.user){
+      await onUserSignedIn(session.user);
+    }
+    supabaseClient.auth.onAuthStateChange(async (event, session)=>{
+      if(event==='SIGNED_IN' && session?.user && !currentUser){
+        await onUserSignedIn(session.user);
+      } else if(event==='SIGNED_OUT'){
+        currentUser=null; userBookmarks={}; userAttempts={};
+        renderUserArea();
+      }
+    });
+  } catch(e) {
+    console.error('Auth init error:', e);
+    // Sign In button already rendered above — nothing more to do
+  }
+}
+// Run after DOM is ready
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded', initAuth);
+} else {
+  // Small defer ensures the DOM paint is complete
+  setTimeout(initAuth, 0);
+}
 
 async function loadQuestions(examId){
   if(QUESTIONS_LOADED[examId]) return;
@@ -1768,15 +2205,29 @@ const EXAM_META={
 function applyTheme(dark){
   document.documentElement.setAttribute('data-theme',dark?'dark':'light');
   ['theme-cb-home','theme-cb-exam'].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.checked=!dark; // checked=true → light mode → thumb slides right (☀️)
+    const el=document.getElementById(id); if(el) el.checked=!dark;
   });
   try{ localStorage.setItem('awsCertTheme',dark?'dark':'light'); }catch(e){}
 }
-function toggleTheme(cb){ applyTheme(!cb.checked); /* cb.checked=true means light selected → dark=false */ }
+function toggleTheme(cb){ applyTheme(!cb.checked); }
+// Apply saved theme immediately (just the data-theme attr — checkboxes synced after DOM ready)
 (function(){
   let saved; try{ saved=localStorage.getItem('awsCertTheme'); }catch(e){}
   const prefersDark=window.matchMedia('(prefers-color-scheme:dark)').matches;
-  applyTheme(saved?saved==='dark':prefersDark);
+  const dark = saved ? saved==='dark' : prefersDark;
+  document.documentElement.setAttribute('data-theme', dark?'dark':'light');
+  // Sync checkboxes once DOM is ready
+  function syncCheckboxes(){
+    ['theme-cb-home','theme-cb-exam'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.checked=!dark;
+    });
+  }
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded', syncCheckboxes);
+  } else {
+    syncCheckboxes();
+  }
+  try{ localStorage.setItem('awsCertTheme', dark?'dark':'light'); }catch(e){}
 })();
 
 /* ═══ STATE ═══ */
@@ -2279,6 +2730,11 @@ function filteredRev(){
   if(revState.search.trim()){const s=revState.search.toLowerCase();qs=qs.filter(q=>q.question.toLowerCase().includes(s)||Object.values(q.options).some(o=>o.toLowerCase().includes(s)));}
   if(revState.filter==='unanswered')qs=qs.filter(q=>!revState.answers[q.question_id]);
   else if(revState.filter==='wrong')qs=qs.filter(q=>{const a=revState.answers[q.question_id];return a&&!arrEq(a.selected.slice().sort(),q.answer.slice().sort());});
+  else if(revState.filter==='bookmarked'){
+    const bmSet = userBookmarks[currentExam]||new Set();
+    const allQs = QUESTIONS_DB[currentExam]||[];
+    qs = qs.filter(q=>{ const idx=allQs.indexOf(q); return bmSet.has(idx); });
+  }
   return qs;
 }
 
@@ -2331,6 +2787,10 @@ function renderRevision(){
           // Single choice — submit immediately
           const ok=arrEq([k].sort(),q.answer.slice().sort());
           revState.answers[qid]={selected:[k],submitted:true,correct:ok};
+          const allQs=QUESTIONS_DB[currentExam]||[];
+          const qIdx=allQs.indexOf(q);
+          saveRevState();
+          saveAttemptToSupabase(currentExam, qIdx, [k], ok);
           const idx=filtered.indexOf(q);
           const card=document.getElementById('rev-card-'+qid);
           if(card){const tmp=document.createElement('div');tmp.innerHTML=buildRevCard(q,start+idx);card.replaceWith(tmp.firstChild);}
@@ -2350,6 +2810,10 @@ function renderRevision(){
       const ok=arrEq(pending.slice().sort(),q.answer.slice().sort());
       revState.answers[qid]={selected:pending.slice(),submitted:true,correct:ok};
       if(revState.pendingRev) delete revState.pendingRev[qid];
+      const allQs=QUESTIONS_DB[currentExam]||[];
+      const qIdx=allQs.indexOf(q);
+      saveRevState();
+      saveAttemptToSupabase(currentExam, qIdx, pending.slice(), ok);
       const idx=filtered.indexOf(q);
       const card=document.getElementById('rev-card-'+qid);
       if(card){const tmp=document.createElement('div');tmp.innerHTML=buildRevCard(q,start+idx);card.replaceWith(tmp.firstChild);}
@@ -2381,6 +2845,10 @@ function bindRevCard(cardEl,q,filtered,gi){
       const ok=arrEq(pending.slice().sort(),q.answer.slice().sort());
       revState.answers[qid]={selected:pending.slice(),submitted:true,correct:ok};
       if(revState.pendingRev) delete revState.pendingRev[qid];
+      const allQs=QUESTIONS_DB[currentExam]||[];
+      const qIdx=allQs.indexOf(q);
+      saveRevState();
+      saveAttemptToSupabase(currentExam, qIdx, pending.slice(), ok);
       const card=document.getElementById('rev-card-'+qid);
       if(card){const tmp=document.createElement('div');tmp.innerHTML=buildRevCard(q,gi);card.replaceWith(tmp.firstChild);}
       updateRevProgress();renderRevSidebar();
@@ -2393,15 +2861,17 @@ function buildRevCard(q,gi){
   const isOk=ans&&arrEq(ans.selected.slice().sort(),q.answer.slice().sort());
   const isMulti=q.question_type==='multi-choice'||q.answer.length>1;
   const pending=(revState.pendingRev&&revState.pendingRev[q.question_id])||[];
+  const allQs=QUESTIONS_DB[currentExam]||[];
+  const qIdx=allQs.indexOf(q);
+  const bmSet=userBookmarks[currentExam]||new Set();
+  const isBookmarked=bmSet.has(qIdx);
   let opts='';
   Object.entries(q.options).forEach(([k,v])=>{
     let cls='';
     if(ans){
-      // Submitted: show result colors
       if(q.answer.includes(k)) cls=ans.selected.includes(k)?'sel-correct':'correct';
       else if(ans.selected.includes(k)) cls='sel-wrong';
     } else if(isMulti&&pending.includes(k)){
-      // Pending multi-select highlight (use 'selected' class from exam style)
       cls='rev-opt-pending';
     }
     const disabled=ans?'disabled':'';
@@ -2412,8 +2882,9 @@ function buildRevCard(q,gi){
   const fb=ans?(isOk?`<div class="rev-feedback correct">✓ Correct! Answer: ${q.answer.join(', ')}</div>`:`<div class="rev-feedback wrong">✗ Wrong. Correct: ${q.answer.join(', ')} — ${q.answer.map(k=>q.options[k]).join('; ')}</div>`):'';
   const refLink=q.reference_link?`<a href="${q.reference_link}" target="_blank" rel="noopener" class="ref-lnk" style="margin-top:8px;display:inline-flex">↗ Reference</a>`:'';
   const expln=(ans&&q.explanation)?`<div class="rev-explanation ${isOk?'correct-exp':''}">${q.explanation}${!isOk?refLink:''}</div>`:'';
+  const bmBtn=`<button class="rev-bookmark-btn ${isBookmarked?'bookmarked':''}" id="rev-bm-btn-${qIdx}" title="${isBookmarked?'Remove bookmark':'Bookmark this question'}" onclick="toggleBookmark('${currentExam}',${qIdx},${JSON.stringify(q.question.substring(0,120))})">` + (isBookmarked ? '⭐' : '☆') + `</button>`;
   return `<div class="rev-q-card" id="rev-card-${q.question_id}">
-    <div class="rev-q-meta"><span class="rev-q-num">#${gi+1}</span><span class="rev-q-topic">${q.topic||'General'}</span>${isMulti?`<span class="rev-q-topic" style="color:var(--yellow);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">Multi-Select</span>`:''}${ans?`<span class="rev-q-status">${isOk?'✅':'❌'}</span>`:''}</div>
+    <div class="rev-q-meta"><span class="rev-q-num">#${gi+1}</span><span class="rev-q-topic">${q.topic||'General'}</span>${isMulti?`<span class="rev-q-topic" style="color:var(--yellow);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">Multi-Select</span>`:''}${ans?`<span class="rev-q-status">${isOk?'✅':'❌'}</span>`:''}${bmBtn}</div>
     <div class="rev-q-text">${q.question}</div>
     ${multiHint}
     <div class="rev-opts">${opts}</div>${submitBtn}${fb}${expln}
@@ -2472,7 +2943,18 @@ function revReset(){
 function doRevReset(){
   const modal=document.getElementById('submit-modal');
   if(modal) modal.remove();
-  filteredRev().forEach(q=>delete revState.answers[q.question_id]);saveRevState();
+  const toReset = filteredRev();
+  toReset.forEach(q=>delete revState.answers[q.question_id]);
+  saveRevState();
+  // Also clear from Supabase
+  if(currentUser){
+    const allQs=QUESTIONS_DB[currentExam]||[];
+    const indices=toReset.map(q=>allQs.indexOf(q)).filter(i=>i>=0);
+    if(indices.length){
+      supabaseClient.from('attempts').delete().eq('user_id',currentUser.id).eq('exam_id',currentExam).in('question_index',indices).then(()=>{});
+      if(userAttempts[currentExam]) indices.forEach(i=>delete userAttempts[currentExam][i]);
+    }
+  }
   revState.pendingRev={};revState.page=0;renderRevision();
 }
 
@@ -2525,6 +3007,15 @@ function loadRevState(){
     const saved=localStorage.getItem('revAns_'+currentExam);
     if(saved){revState.answers=JSON.parse(saved);}
   }catch(e){}
+  // Merge Supabase attempts (keyed by question_index → need to map to question_id)
+  const qs = QUESTIONS_DB[currentExam]||[];
+  const cloudAttempts = userAttempts[currentExam]||{};
+  Object.entries(cloudAttempts).forEach(([idx, att])=>{
+    const q = qs[parseInt(idx)];
+    if(q && q.question_id && !revState.answers[q.question_id]){
+      revState.answers[q.question_id] = att;
+    }
+  });
 }
 /* ═══ NOTES (MLA + DEA) ═══
  * To add more PDFs, simply append an object to MLA_NOTES or DEA_NOTES below.
