@@ -6892,7 +6892,7 @@
       document.getElementById('exam-header-badge').textContent = m.badge;
       document.getElementById('view-exam').className = 'view exam-' + m.color;
       Object.assign(quizState, { questions: [], current: 0, answers: {}, score: { correct: 0, wrong: 0 }, done: false, questionTimes: {} });
-      Object.assign(revState, { answers: {}, filter: 'all', topic: 'All Topics', search: '', page: 0, pendingRev: {} }); loadRevState();
+      Object.assign(revState, { answers: {}, filter: 'all', topic: 'All Topics', search: '', page: 0, pendingRev: {} });
       document.querySelectorAll('.rev-filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === 'all'));
       // Show Notes tab for AIF, MLA and DEA
       document.getElementById('tab-notes').style.display = (id === 'mla' || id === 'dea' || id === 'aif') ? '' : 'none';
@@ -6930,6 +6930,7 @@
       if (launchBtn) launchBtn.disabled = true;
       await loadQuestions(id);
       setupQuizConfig();
+      loadRevState(); // moved here — QUESTIONS_DB is now populated so index→question_id mapping works
     }
 
     function goHome() {
@@ -7310,6 +7311,19 @@
         const ok = arrEq(ans.selected.slice().sort(), q.answer.slice().sort());
         if (ok) correct++; else wrong++;
       });
+      // Persist quiz-mode answers to Supabase so revision mode sees them on
+      // any device. Revision mode saves per-answer; quiz mode batches here
+      // when the results screen appears (exam submitted or time expired).
+      if (currentUser && currentExam) {
+        st.questions.forEach((q, i) => {
+          const ans = st.answers[i];
+          if (!ans || !ans.selected || !ans.selected.length) return;
+          const ok = arrEq(ans.selected.slice().sort(), q.answer.slice().sort());
+          if (!userAttempts[currentExam]) userAttempts[currentExam] = {};
+          userAttempts[currentExam][i] = { selected: ans.selected, correct: ok, submitted: true };
+          saveAttemptToSupabase(currentExam, i, ans.selected, ok);
+        });
+      }
       const pct = Math.round((correct / total) * 100), pass = pct >= 70;
       // Total time used
       const totalTimeSec = EXAM_DURATION - examSecondsLeft;
@@ -7648,22 +7662,21 @@
 
     /* ═══ REVISION PROGRESS PERSISTENCE ═══ */
     function saveRevState() {
-      if (!currentExam) return;
-      try { localStorage.setItem('revAns_' + currentExam, JSON.stringify(revState.answers)); } catch (e) { }
+      // No-op: answers are saved to Supabase via saveAttemptToSupabase() at
+      // the moment of answering. localStorage removed — it was device-local
+      // and caused cross-device sync to fail.
     }
     function loadRevState() {
       if (!currentExam) return;
-      try {
-        const saved = localStorage.getItem('revAns_' + currentExam);
-        if (saved) { revState.answers = JSON.parse(saved); }
-      } catch (e) { }
-      // Merge Supabase attempts (keyed by question_index → need to map to question_id)
+      // Supabase is the sole source of truth. Called only after
+      // await loadQuestions() so QUESTIONS_DB is populated and the
+      // index→question_id mapping is guaranteed to work.
       const qs = QUESTIONS_DB[currentExam] || [];
       const cloudAttempts = userAttempts[currentExam] || {};
       Object.entries(cloudAttempts).forEach(([idx, att]) => {
         const q = qs[parseInt(idx)];
-        if (q && q.question_id && !revState.answers[q.question_id]) {
-          revState.answers[q.question_id] = att;
+        if (q && q.question_id) {
+          revState.answers[q.question_id] = att; // cloud always wins
         }
       });
     }
